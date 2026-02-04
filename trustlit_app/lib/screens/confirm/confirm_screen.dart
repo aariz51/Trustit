@@ -1,50 +1,46 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../config/app_colors.dart';
 
-/// Confirm Screen - Based on 11.png, 22.png, 23.png
-/// Shows front and back image previews with Retake and Start Analysis buttons
+/// Confirm Screen - Matches designs 20-22.png
+/// Shows front and back images side by side with Retake and Start Analysis buttons
 class ConfirmScreen extends StatelessWidget {
-  final String frontImagePath;
-  final String backImagePath;
+  final String? frontImagePath;
+  final String? backImagePath;
 
   const ConfirmScreen({
     super.key,
-    required this.frontImagePath,
-    required this.backImagePath,
+    this.frontImagePath,
+    this.backImagePath,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
           onPressed: () => context.pop(),
-          icon: Icon(
-            Icons.arrow_back,
-            color: AppColors.textBlack,
-          ),
         ),
         centerTitle: true,
         title: RichText(
-          text: TextSpan(
-            style: const TextStyle(
+          text: const TextSpan(
+            style: TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
             ),
             children: [
               TextSpan(
                 text: 'Reveal',
-                style: TextStyle(color: AppColors.textBlack),
+                style: TextStyle(color: Color(0xFF1A1A1A)),
               ),
               TextSpan(
                 text: 'It',
-                style: TextStyle(color: AppColors.primaryGreen),
+                style: TextStyle(color: Color(0xFF22C55E)),
               ),
             ],
           ),
@@ -53,144 +49,156 @@ class ConfirmScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-                    // Image Previews
-                    Row(
-                      children: [
-                        // Front Image
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                'Front',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textDarkGray,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              _buildImagePreview(frontImagePath),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // Back Image
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                'Back',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textDarkGray,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              _buildImagePreview(backImagePath),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const Spacer(),
-
-                    // Confirmation Section
-                    Text(
-                      'Confirm Your Selection',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Ready to analyze both images?',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 14,
-                        color: AppColors.textGray,
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-                  ],
-                ),
-              ),
-            ),
-
-            // Bottom Buttons
+            // Front and Back labels with images
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 children: [
-                  // Retake Button
+                  // Front column
                   Expanded(
-                    child: SizedBox(
-                      height: 52,
-                      child: OutlinedButton.icon(
-                        onPressed: () => context.pop(),
-                        icon: Icon(
-                          Icons.close,
-                          size: 18,
-                          color: AppColors.deleteRed,
-                        ),
-                        label: Text(
-                          'Retake',
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Front',
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.deleteRed,
+                            color: Color(0xFF1A1A1A),
                           ),
                         ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.deleteRed),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        const SizedBox(height: 12),
+                        _ImagePreview(imagePath: frontImagePath),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Back column
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Back',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF1A1A1A),
                           ),
+                        ),
+                        const SizedBox(height: 12),
+                        _ImagePreview(imagePath: backImagePath),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // Confirm Your Selection text
+            const Text(
+              'Confirm Your Selection',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Ready to analyze both images?',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 16,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Action buttons
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  // Retake button
+                  Expanded(
+                    child: SizedBox(
+                      height: 56,
+                      child: OutlinedButton(
+                        onPressed: () => context.pop(),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFEF4444)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.close,
+                              color: Color(0xFFEF4444),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Retake',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFEF4444),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  // Start Analysis Button
+                  const SizedBox(width: 16),
+                  // Start Analysis button
                   Expanded(
                     child: SizedBox(
-                      height: 52,
-                      child: ElevatedButton.icon(
-                        onPressed: () => _startAnalysis(context),
-                        icon: Icon(
-                          Icons.grid_view,
-                          size: 18,
-                          color: AppColors.white,
-                        ),
-                        label: Text(
-                          'Start Analysis',
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.white,
-                          ),
-                        ),
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigate to analysis screen
+                          context.push('/analyzing', extra: {
+                            'front': frontImagePath,
+                            'back': backImagePath,
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryGreen,
+                          backgroundColor: const Color(0xFF22C55E),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(28),
                           ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.document_scanner_outlined,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Start Analysis',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -198,96 +206,46 @@ class ConfirmScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildImagePreview(String imagePath) {
+/// Image preview widget
+class _ImagePreview extends StatelessWidget {
+  final String? imagePath;
+
+  const _ImagePreview({this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 280,
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: const Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: imagePath.isNotEmpty
+        borderRadius: BorderRadius.circular(15),
+        child: imagePath != null
             ? Image.file(
-                File(imagePath),
+                File(imagePath!),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
-                errorBuilder: (_, __, ___) => _buildPlaceholder(),
               )
-            : _buildPlaceholder(),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return Center(
-      child: Icon(
-        Icons.image,
-        size: 48,
-        color: AppColors.textLightGray,
-      ),
-    );
-  }
-
-  void _startAnalysis(BuildContext context) {
-    // Capture navigator state before async operation
-    final navigator = Navigator.of(context);
-    final router = GoRouter.of(context);
-    
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(
-              color: AppColors.primaryGreen,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Analyzing product...',
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textBlack,
+            : const Center(
+                child: Icon(
+                  Icons.image_outlined,
+                  size: 48,
+                  color: Color(0xFF9CA3AF),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'This may take a few seconds',
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 13,
-                color: AppColors.textGray,
-              ),
-            ),
-          ],
-        ),
       ),
     );
-
-    // Simulate analysis (TODO: Replace with actual API call)
-    Future.delayed(const Duration(seconds: 2), () {
-      navigator.pop(); // Close loading dialog
-      router.go('/analysis', extra: {
-        'analysisId': 'mock_analysis_id',
-        'frontImagePath': frontImagePath,
-        'backImagePath': backImagePath,
-      });
-    });
   }
 }

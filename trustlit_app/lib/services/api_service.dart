@@ -22,9 +22,10 @@ class ApiResponse<T> {
 class ApiService {
   // Base URL - configurable via build-time environment
   // Build with: flutter run --dart-define=API_BASE_URL=https://api.trustlit.com/api
+  // For physical device on local network, use your computer's IP
   static const String _baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:3000/api',
+    defaultValue: 'http://192.168.1.23:3000/api',
   );
 
   static final ApiService _instance = ApiService._internal();

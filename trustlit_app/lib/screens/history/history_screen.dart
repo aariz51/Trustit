@@ -1,94 +1,151 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import '../../config/app_colors.dart';
-import '../../providers/scan_history_provider.dart';
-import '../../models/scan_history_model.dart';
 
-/// History Screen - Based on 17.png, 18.png, 19.png, 24.png, 25.png, 26.png
-/// Shows empty state or list of scanned products with swipe-to-delete
-class HistoryScreen extends StatelessWidget {
+/// History Screen - Matches designs 14, 24-26.png
+/// Shows scan history empty state with clock icon or list of scanned products
+/// Includes swipe-to-delete with confirmation dialog
+class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
+
+  @override
+  State<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  // Sample data - will be replaced with actual data from provider
+  final List<HistoryItem> _historyItems = [
+    HistoryItem(
+      id: '1',
+      productName: 'Treasure Chipotle A...',
+      category: 'Sauce',
+      score: 3,
+      riskLevel: 'Bad',
+      riskColor: const Color(0xFFEF4444),
+      scannedAt: DateTime.now().subtract(const Duration(minutes: 1)),
+    ),
+    HistoryItem(
+      id: '2',
+      productName: 'CHOCOLATE SYRUP',
+      category: 'Dessert',
+      score: 15,
+      riskLevel: 'Bad',
+      riskColor: const Color(0xFFEF4444),
+      scannedAt: DateTime.now().subtract(const Duration(minutes: 2)),
+    ),
+    HistoryItem(
+      id: '3',
+      productName: 'PHILADELPHIA CRE...',
+      category: 'Dairy',
+      score: 95,
+      riskLevel: 'Excellent',
+      riskColor: const Color(0xFF22C55E),
+      scannedAt: DateTime.now().subtract(const Duration(minutes: 3)),
+    ),
+    HistoryItem(
+      id: '4',
+      productName: 'Cremeux Légè Pean...',
+      category: 'Spread',
+      score: 60,
+      riskLevel: 'Average',
+      riskColor: const Color(0xFFF59E0B),
+      scannedAt: DateTime.now().subtract(const Duration(minutes: 5)),
+    ),
+    HistoryItem(
+      id: '5',
+      productName: 'Natrel Fine-filtered ...',
+      category: 'Dairy',
+      score: 65,
+      riskLevel: 'Average',
+      riskColor: const Color(0xFFF59E0B),
+      scannedAt: DateTime.now().subtract(const Duration(minutes: 6)),
+    ),
+    HistoryItem(
+      id: '6',
+      productName: 'Great Value Corn Fl...',
+      category: 'Cereal',
+      score: 45,
+      riskLevel: 'Medium',
+      riskColor: const Color(0xFFF59E0B),
+      scannedAt: DateTime.now().subtract(const Duration(minutes: 8)),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'History',
           style: TextStyle(
             fontFamily: 'Outfit',
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
+            color: Color(0xFF1A1A1A),
           ),
         ),
         actions: [
-          Consumer<ScanHistoryProvider>(
-            builder: (context, provider, _) {
-              if (provider.isEmpty) return const SizedBox();
-              return IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: AppColors.textGray,
-                ),
-                onPressed: () => _showClearAllDialog(context),
-              );
-            },
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Color(0xFF9CA3AF)),
+            onPressed: _historyItems.isEmpty ? null : _showClearAllDialog,
           ),
         ],
       ),
-      body: Consumer<ScanHistoryProvider>(
-        builder: (context, provider, _) {
-          if (provider.isEmpty) {
-            return _buildEmptyState();
-          }
-          return _buildHistoryList(context, provider.history);
-        },
-      ),
+      body: _historyItems.isEmpty
+          ? _buildEmptyState()
+          : _buildHistoryList(),
     );
   }
 
+  /// Empty state - matches design 14.png exactly
   Widget _buildEmptyState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Clock icon in green circle
           Container(
             width: 100,
             height: 100,
-            decoration: BoxDecoration(
-              color: AppColors.lightGray,
+            decoration: const BoxDecoration(
+              color: Color(0xFFDCFCE7),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.history,
+            child: const Icon(
+              Icons.access_time_rounded,
               size: 48,
-              color: AppColors.textLightGray,
+              color: Color(0xFF22C55E),
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+
+          // Title
+          const Text(
             'No Scan History Yet',
             style: TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: AppColors.textBlack,
+              color: Color(0xFF1A1A1A),
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Start scanning products to see\nyour history here',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 14,
-              color: AppColors.textGray,
+
+          // Subtitle
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 48),
+            child: Text(
+              'Start scanning products to see\nyour analysis history here',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 16,
+                color: Color(0xFF6B7280),
+                height: 1.4,
+              ),
             ),
           ),
         ],
@@ -96,306 +153,136 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHistoryList(BuildContext context, List<ScanHistoryModel> history) {
+  /// History list view - matches design 24-25.png
+  Widget _buildHistoryList() {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: history.length,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: _historyItems.length,
       itemBuilder: (context, index) {
-        final item = history[index];
-        return _buildHistoryItem(context, item);
-      },
-    );
-  }
-
-  Widget _buildHistoryItem(BuildContext context, ScanHistoryModel item) {
-    return Dismissible(
-      key: Key(item.id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: AppColors.deleteRed,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Icon(
-              Icons.delete,
-              color: AppColors.white,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Delete',
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-      confirmDismiss: (direction) => _showDeleteConfirmDialog(context),
-      onDismissed: (direction) {
-        context.read<ScanHistoryProvider>().removeScan(item.id);
-      },
-      child: GestureDetector(
-        onTap: () {
-          context.push('/analysis', extra: {'analysisId': item.id});
-        },
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Product Thumbnail
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: AppColors.lightGray,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: item.thumbnailPath != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          item.thumbnailPath!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Icon(
-                            Icons.image,
-                            color: AppColors.textLightGray,
-                          ),
-                        ),
-                      )
-                    : Icon(
-                        Icons.shopping_bag,
-                        color: AppColors.textLightGray,
-                      ),
-              ),
-              const SizedBox(width: 12),
-              // Product Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.productName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getRatingColor(item.overallScore)
-                                .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            item.ratingLabel,
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: _getRatingColor(item.overallScore),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.access_time,
-                          size: 12,
-                          color: AppColors.textLightGray,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _formatTimeAgo(item.scannedAt),
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 11,
-                            color: AppColors.textLightGray,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              // Score Circle
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: _getRatingColor(item.overallScore),
-                    width: 3,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    item.overallScore.toString(),
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: _getRatingColor(item.overallScore),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: AppColors.textLightGray,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _getRatingColor(int score) {
-    return AppColors.getScoreColor(score);
-  }
-
-  String _formatTimeAgo(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inMinutes < 1) return 'just now';
-    if (difference.inMinutes < 60) return '${difference.inMinutes} minutes ago';
-    if (difference.inHours < 24) return '${difference.inHours} hours ago';
-    if (difference.inDays < 7) return '${difference.inDays} days ago';
-    return '${(difference.inDays / 7).floor()} weeks ago';
-  }
-
-  Future<bool> _showDeleteConfirmDialog(BuildContext context) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: Text(
-              'Delete Item',
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textBlack,
-              ),
-            ),
-            content: Text(
-              'Are you sure you want to delete this item?',
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 14,
-                color: AppColors.textGray,
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    color: AppColors.textGray,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(
+        final item = _historyItems[index];
+        return Dismissible(
+          key: Key(item.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 16),
+            color: const Color(0xFFEF4444),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Icon(Icons.delete, color: Colors.white),
+                const SizedBox(width: 8),
+                const Text(
                   'Delete',
                   style: TextStyle(
                     fontFamily: 'Outfit',
-                    color: AppColors.deleteRed,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ) ??
-        false;
+          confirmDismiss: (direction) => _showDeleteConfirmDialog(item),
+          onDismissed: (direction) => _deleteItem(item),
+          child: _HistoryListItem(
+            item: item,
+            onTap: () => context.push('/analysis/${item.id}'),
+          ),
+        );
+      },
+    );
   }
 
-  void _showClearAllDialog(BuildContext context) {
+  Future<bool?> _showDeleteConfirmDialog(HistoryItem item) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Delete Item',
+          style: TextStyle(
+            fontFamily: 'Outfit',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this item?',
+          style: TextStyle(fontFamily: 'Outfit'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                color: Color(0xFF6B7280),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Delete',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                color: Color(0xFFEF4444),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteItem(HistoryItem item) {
+    setState(() {
+      _historyItems.removeWhere((i) => i.id == item.id);
+    });
+  }
+
+  void _showClearAllDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
           'Clear All History',
           style: TextStyle(
             fontFamily: 'Outfit',
-            fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
           ),
         ),
-        content: Text(
+        content: const Text(
           'Are you sure you want to delete all scan history?',
-          style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 14,
-            color: AppColors.textGray,
-          ),
+          style: TextStyle(fontFamily: 'Outfit'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 fontFamily: 'Outfit',
-                color: AppColors.textGray,
+                color: Color(0xFF6B7280),
               ),
             ),
           ),
           TextButton(
             onPressed: () {
-              context.read<ScanHistoryProvider>().clearHistory();
               Navigator.pop(context);
+              setState(() {
+                _historyItems.clear();
+              });
             },
-            child: Text(
+            child: const Text(
               'Delete All',
               style: TextStyle(
                 fontFamily: 'Outfit',
-                color: AppColors.deleteRed,
+                color: Color(0xFFEF4444),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -403,5 +290,169 @@ class HistoryScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// History Item Data Model
+class HistoryItem {
+  final String id;
+  final String productName;
+  final String category;
+  final int score;
+  final String riskLevel;
+  final Color riskColor;
+  final DateTime scannedAt;
+  final String? imageUrl;
+
+  const HistoryItem({
+    required this.id,
+    required this.productName,
+    required this.category,
+    required this.score,
+    required this.riskLevel,
+    required this.riskColor,
+    required this.scannedAt,
+    this.imageUrl,
+  });
+}
+
+/// History list item - matches design 24.png exactly
+class _HistoryListItem extends StatelessWidget {
+  final HistoryItem item;
+  final VoidCallback onTap;
+
+  const _HistoryListItem({
+    required this.item,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Color(0xFFF3F4F6)),
+          ),
+        ),
+        child: Row(
+          children: [
+            // Product thumbnail
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.inventory_2_outlined,
+                size: 24,
+                color: Color(0xFF9CA3AF),
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // Product info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.productName,
+                    style: const TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A1A),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: item.riskColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        item.riskLevel,
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 12,
+                          color: item.riskColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatTime(item.scannedAt),
+                    style: const TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 12,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Score circle
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: item.riskColor,
+                  width: 3,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  '${item.score}',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: item.riskColor,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 8),
+            const Icon(
+              Icons.chevron_right,
+              color: Color(0xFF9CA3AF),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatTime(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inMinutes < 1) {
+      return 'just now';
+    } else if (diff.inMinutes < 60) {
+      return '${diff.inMinutes} minutes ago';
+    } else if (diff.inHours < 24) {
+      return '${diff.inHours} hours ago';
+    } else {
+      return '${diff.inDays} days ago';
+    }
   }
 }

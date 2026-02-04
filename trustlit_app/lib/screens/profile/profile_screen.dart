@@ -1,432 +1,369 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../config/app_colors.dart';
-import '../../providers/subscription_provider.dart';
-import '../../providers/scan_history_provider.dart';
-import '../../services/storage_service.dart';
 
-/// Profile Screen - Based on 21.png, 30.png
-/// Shows user profile, subscription status, and settings
-class ProfileScreen extends StatefulWidget {
+/// Profile Screen - User settings and account management
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  bool _notificationsEnabled = true;
-  final StorageService _storageService = StorageService();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNotificationPreference();
-  }
-
-  void _loadNotificationPreference() {
-    _notificationsEnabled = _storageService.getNotificationsEnabled();
-  }
-
-  Future<void> _toggleNotifications(bool value) async {
-    setState(() => _notificationsEnabled = value);
-    await _storageService.setNotificationsEnabled(value);
-  }
-
-  Future<void> _launchURL(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         title: const Text(
           'Profile',
           style: TextStyle(
             fontFamily: 'Outfit',
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
+            color: Color(0xFF1A1A1A),
           ),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Profile Avatar
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryGreen.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.person,
-                  size: 48,
-                  color: AppColors.primaryGreen,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'TrustLit User',
-                style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              const SizedBox(height: 32),
+        child: Column(
+          children: [
+            const SizedBox(height: 24),
 
-              // Subscription Status
-              _buildSubscriptionCard(context),
-              const SizedBox(height: 24),
-
-              // Stats Card
-              _buildStatsCard(context),
-              const SizedBox(height: 24),
-
-              // Settings List
-              _buildSettingsSection(context),
-              const SizedBox(height: 24),
-
-              // App Info
-              _buildAppInfo(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSubscriptionCard(BuildContext context) {
-    return Consumer<SubscriptionProvider>(
-      builder: (context, subscription, _) {
-        final isActive = subscription.isActive;
-
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isActive
-                  ? [AppColors.primaryGreen, AppColors.primaryGreenDark]
-                  : [AppColors.textGray, AppColors.textDarkGray],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+            // Profile Avatar
+            Center(
+              child: Stack(
                 children: [
-                  Icon(
-                    isActive ? Icons.verified : Icons.lock_outline,
-                    color: AppColors.white,
-                    size: 24,
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDCFCE7),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      size: 48,
+                      color: Color(0xFF22C55E),
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    isActive ? 'Premium Member' : 'Free User',
-                    style: const TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.white,
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF22C55E),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        size: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                isActive
-                    ? (subscription.isLifetime
-                        ? 'Lifetime Access'
-                        : 'Valid until ${_formatDate(subscription.expiryDate)}')
-                    : 'Upgrade to unlock all features',
+            ),
+            const SizedBox(height: 16),
+
+            // User Name
+            const Text(
+              'Guest User',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            // Subscription Badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF3C7),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Text(
+                'Free Plan',
                 style: TextStyle(
                   fontFamily: 'Outfit',
                   fontSize: 14,
-                  color: AppColors.white.withValues(alpha: 0.9),
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFFF59E0B),
                 ),
               ),
-              if (!isActive) ...[
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Navigate to paywall
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.white,
-                      foregroundColor: AppColors.primaryGreen,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+            ),
+            const SizedBox(height: 32),
+
+            // Upgrade Banner
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Upgrade to Pro',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Unlock unlimited scans & AI chat',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 14,
+                            color: Colors.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
-                      'Upgrade Now',
+                      'Upgrade',
                       style: TextStyle(
                         fontFamily: 'Outfit',
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
+                        color: Color(0xFF22C55E),
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Settings Sections
+            _SettingsSection(
+              title: 'Account',
+              items: [
+                _SettingsItem(
+                  icon: Icons.person_outline,
+                  title: 'Edit Profile',
+                  onTap: () {},
+                ),
+                _SettingsItem(
+                  icon: Icons.notifications_outlined,
+                  title: 'Notifications',
+                  onTap: () {},
+                ),
+                _SettingsItem(
+                  icon: Icons.lock_outline,
+                  title: 'Privacy',
+                  onTap: () {},
                 ),
               ],
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildStatsCard(BuildContext context) {
-    return Consumer<ScanHistoryProvider>(
-      builder: (context, historyProvider, _) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.lightGray,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatItem(
-                icon: Icons.qr_code_scanner,
-                value: historyProvider.count.toString(),
-                label: 'Scans',
-              ),
-              Container(
-                width: 1,
-                height: 50,
-                color: AppColors.divider,
-              ),
-              _buildStatItem(
-                icon: Icons.history,
-                value: 'All',
-                label: 'Saved',
-              ),
-              Container(
-                width: 1,
-                height: 50,
-                color: AppColors.divider,
-              ),
-              _buildStatItem(
-                icon: Icons.schedule,
-                value: '∞',
-                label: 'Access',
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildStatItem({
-    required IconData icon,
-    required String value,
-    required String label,
-  }) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: AppColors.primaryGreen,
-          size: 24,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textBlack,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 12,
-            color: AppColors.textGray,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSettingsSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Settings',
-          style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-        const SizedBox(height: 12),
-        _buildSettingsItem(
-          icon: Icons.restore,
-          title: 'Restore Purchases',
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Restoring purchases...')),
-            );
-          },
-        ),
-        _buildSettingsItem(
-          icon: Icons.notifications_outlined,
-          title: 'Notifications',
-          trailing: Switch(
-            value: _notificationsEnabled,
-            onChanged: _toggleNotifications,
-            activeColor: AppColors.primaryGreen,
-          ),
-        ),
-        _buildSettingsItem(
-          icon: Icons.privacy_tip_outlined,
-          title: 'Privacy Policy',
-          onTap: () => _launchURL('https://trustlit.app/privacy'),
-        ),
-        _buildSettingsItem(
-          icon: Icons.description_outlined,
-          title: 'Terms of Service',
-          onTap: () => _launchURL('https://trustlit.app/terms'),
-        ),
-        _buildSettingsItem(
-          icon: Icons.help_outline,
-          title: 'Help & Support',
-          onTap: () => _launchURL('mailto:support@trustlit.app'),
-        ),
-        _buildSettingsItem(
-          icon: Icons.star_outline,
-          title: 'Rate the App',
-          onTap: () {
-            // TODO: Open app store rating page
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Opening app store...')),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSettingsItem({
-    required IconData icon,
-    required String title,
-    VoidCallback? onTap,
-    Widget? trailing,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: AppColors.divider, width: 0.5),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: AppColors.textGray,
-              size: 22,
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 15,
-                  color: AppColors.textBlack,
+            _SettingsSection(
+              title: 'Subscription',
+              items: [
+                _SettingsItem(
+                  icon: Icons.card_membership,
+                  title: 'Manage Subscription',
+                  onTap: () {},
+                ),
+                _SettingsItem(
+                  icon: Icons.restore,
+                  title: 'Restore Purchases',
+                  onTap: () {},
+                ),
+              ],
+            ),
+            _SettingsSection(
+              title: 'Support',
+              items: [
+                _SettingsItem(
+                  icon: Icons.help_outline,
+                  title: 'Help Center',
+                  onTap: () {},
+                ),
+                _SettingsItem(
+                  icon: Icons.email_outlined,
+                  title: 'Contact Us',
+                  onTap: () {},
+                ),
+                _SettingsItem(
+                  icon: Icons.star_outline,
+                  title: 'Rate App',
+                  onTap: () {},
+                ),
+              ],
+            ),
+            _SettingsSection(
+              title: 'Legal',
+              items: [
+                _SettingsItem(
+                  icon: Icons.description_outlined,
+                  title: 'Terms of Service',
+                  onTap: () {},
+                ),
+                _SettingsItem(
+                  icon: Icons.privacy_tip_outlined,
+                  title: 'Privacy Policy',
+                  onTap: () {},
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Sign Out Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: OutlinedButton(
+                  onPressed: () {
+                    // Sign out logic
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFFEF4444)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Sign Out',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFEF4444),
+                    ),
+                  ),
                 ),
               ),
             ),
-            trailing ??
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: AppColors.textLightGray,
-                ),
+            const SizedBox(height: 16),
+
+            // App Version
+            const Text(
+              'Version 1.0.0',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 14,
+                color: Color(0xFF9CA3AF),
+              ),
+            ),
+            const SizedBox(height: 100), // Bottom nav space
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildAppInfo() {
+/// Settings Section Widget
+class _SettingsSection extends StatelessWidget {
+  final String title;
+  final List<_SettingsItem> items;
+
+  const _SettingsSection({
+    required this.title,
+    required this.items,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: const TextSpan(
-            style: TextStyle(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            title,
+            style: const TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF6B7280),
             ),
-            children: [
-              TextSpan(
-                text: 'Trust',
-                style: TextStyle(color: AppColors.textBlack),
-              ),
-              TextSpan(
-                text: 'It',
-                style: TextStyle(color: AppColors.primaryGreen),
-              ),
-            ],
           ),
         ),
-        const SizedBox(height: 4),
-        const Text(
-          'Version 1.0.0',
-          style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 12,
-            color: AppColors.textGray,
-          ),
-        ),
-        const SizedBox(height: 4),
-        const Text(
-          'Made with ❤️ for your health',
-          style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 12,
-            color: AppColors.textLightGray,
-          ),
-        ),
+        ...items,
+        const SizedBox(height: 8),
       ],
     );
   }
+}
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
-    return '${date.day}/${date.month}/${date.year}';
+/// Settings Item Widget
+class _SettingsItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const _SettingsItem({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Color(0xFFF3F4F6)),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: const Color(0xFF6B7280), size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 16,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              color: Color(0xFF9CA3AF),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

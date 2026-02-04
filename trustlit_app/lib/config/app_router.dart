@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/splash/splash_screen.dart';
+import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/paywall/paywall_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/camera/camera_screen.dart';
 import '../screens/confirm/confirm_screen.dart';
-import '../screens/analysis/analysis_screen.dart';
+import '../screens/analysis/analysis_result_screen.dart';
+import '../screens/analysis/analyzing_screen.dart';
 import '../screens/history/history_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import '../screens/profile/profile_screen.dart';
@@ -34,12 +36,20 @@ class AppRouter {
         builder: (context, state) => const SplashScreen(),
       ),
 
+      // Onboarding Screen
+      GoRoute(
+        path: '/onboarding',
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
+
       // Paywall Screen
       GoRoute(
         path: '/paywall',
         name: 'paywall',
         builder: (context, state) => const PaywallScreen(),
       ),
+
 
       // Main Shell with Bottom Navigation
       ShellRoute(
@@ -89,32 +99,33 @@ class AppRouter {
         name: 'confirm',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
-          if (extra == null ||
-              extra['frontImagePath'] == null ||
-              extra['backImagePath'] == null) {
-            throw ArgumentError(
-                'ConfirmScreen requires frontImagePath and backImagePath in route extras');
-          }
           return ConfirmScreen(
-            frontImagePath: extra['frontImagePath'] as String,
-            backImagePath: extra['backImagePath'] as String,
+            frontImagePath: extra?['front'] as String?,
+            backImagePath: extra?['back'] as String?,
           );
         },
       ),
 
-      // Analysis Screen (Full screen, no bottom nav)
+      // Analyzing Screen (Full screen, loading animation)
       GoRoute(
-        path: '/analysis',
-        name: 'analysis',
+        path: '/analyzing',
+        name: 'analyzing',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
-          if (extra == null || extra['analysisId'] == null) {
-            throw ArgumentError(
-                'AnalysisScreen requires analysisId in route extras');
-          }
-          return AnalysisScreen(
-            analysisId: extra['analysisId'] as String,
+          return AnalyzingScreen(
+            frontImagePath: extra?['front'] as String?,
+            backImagePath: extra?['back'] as String?,
           );
+        },
+      ),
+
+      // Analysis Result Screen (Full screen, no bottom nav)
+      GoRoute(
+        path: '/analysis/:id',
+        name: 'analysis',
+        builder: (context, state) {
+          final analysisId = state.pathParameters['id'];
+          return AnalysisResultScreen(analysisId: analysisId);
         },
       ),
     ],
