@@ -1,0 +1,11 @@
+﻿Analyzing lib...
+
+  error - providers\analysis_provider.dart:136:25 - The named parameter 'ratingLabel' is required, but there's no corresponding argument. Try adding the required argument. - missing_required_argument
+  error - providers\analysis_provider.dart:136:25 - The named parameter 'scannedAt' is required, but there's no corresponding argument. Try adding the required argument. - missing_required_argument
+  error - providers\analysis_provider.dart:141:7 - The named parameter 'scanDate' isn't defined. Try correcting the name to an existing named parameter's name, or defining a named parameter with the name 'scanDate'. - undefined_named_parameter
+  error - providers\analysis_provider.dart:142:7 - The named parameter 'productImagePath' isn't defined. Try correcting the name to an existing named parameter's name, or defining a named parameter with the name 'productImagePath'. - undefined_named_parameter
+  error - services\storage_service.dart:54:28 - The getter 'scanDate' isn't defined for the type 'ScanHistoryModel'. Try importing the library that defines 'scanDate', correcting the name to the name of an existing getter, or defining a getter or field named 'scanDate'. - undefined_getter
+  error - services\storage_service.dart:54:49 - The getter 'scanDate' isn't defined for the type 'ScanHistoryModel'. Try importing the library that defines 'scanDate', correcting the name to the name of an existing getter, or defining a getter or field named 'scanDate'. - undefined_getter
+warning - services\subscription_service.dart:2:8 - Unused import: 'dart:io'. Try removing the import directive. - unused_import
+
+7 issues found.

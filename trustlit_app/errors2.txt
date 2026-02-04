@@ -1,0 +1,6 @@
+﻿Analyzing lib...
+
+   info - screens\confirm\confirm_screen.dart:281:21 - Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check. - use_build_context_synchronously
+   info - screens\confirm\confirm_screen.dart:282:7 - Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check. - use_build_context_synchronously
+
+2 issues found.

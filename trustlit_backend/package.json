@@ -1,0 +1,30 @@
+{
+  "name": "trustlit_backend",
+  "version": "1.0.0",
+  "description": "TrustLit Backend API - Product safety analysis with AI",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "trustlit",
+    "product-analysis",
+    "ai",
+    "openai",
+    "food-safety"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
