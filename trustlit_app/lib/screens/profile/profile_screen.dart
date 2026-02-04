@@ -1,13 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
 import '../../providers/subscription_provider.dart';
 import '../../providers/scan_history_provider.dart';
+import '../../services/storage_service.dart';
 
 /// Profile Screen - Based on 21.png, 30.png
 /// Shows user profile, subscription status, and settings
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _notificationsEnabled = true;
+  final StorageService _storageService = StorageService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationPreference();
+  }
+
+  void _loadNotificationPreference() {
+    _notificationsEnabled = _storageService.getNotificationsEnabled();
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    setState(() => _notificationsEnabled = value);
+    await _storageService.setNotificationsEnabled(value);
+  }
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -270,30 +302,35 @@ class ProfileScreen extends StatelessWidget {
           icon: Icons.notifications_outlined,
           title: 'Notifications',
           trailing: Switch(
-            value: true,
-            onChanged: (value) {},
+            value: _notificationsEnabled,
+            onChanged: _toggleNotifications,
             activeColor: AppColors.primaryGreen,
           ),
         ),
         _buildSettingsItem(
           icon: Icons.privacy_tip_outlined,
           title: 'Privacy Policy',
-          onTap: () {},
+          onTap: () => _launchURL('https://trustlit.app/privacy'),
         ),
         _buildSettingsItem(
           icon: Icons.description_outlined,
           title: 'Terms of Service',
-          onTap: () {},
+          onTap: () => _launchURL('https://trustlit.app/terms'),
         ),
         _buildSettingsItem(
           icon: Icons.help_outline,
           title: 'Help & Support',
-          onTap: () {},
+          onTap: () => _launchURL('mailto:support@trustlit.app'),
         ),
         _buildSettingsItem(
           icon: Icons.star_outline,
           title: 'Rate the App',
-          onTap: () {},
+          onTap: () {
+            // TODO: Open app store rating page
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Opening app store...')),
+            );
+          },
         ),
       ],
     );

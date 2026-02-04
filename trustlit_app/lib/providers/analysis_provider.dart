@@ -152,9 +152,5 @@ class AnalysisProvider extends ChangeNotifier {
     return response.success;
   }
 
-  @override
-  void dispose() {
-    _apiService.dispose();
-    super.dispose();
-  }
+  // Note: Not disposing _apiService as it's a singleton shared across the app
 }

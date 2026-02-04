@@ -20,12 +20,12 @@ class ApiResponse<T> {
 
 /// API Service for communicating with TrustLit Backend
 class ApiService {
-  // Base URL - change this for production
-  static const String _baseUrl = 'http://localhost:3000/api';
-
-  // For Android emulator use: 'http://10.0.2.2:3000/api'
-  // For iOS simulator use: 'http://localhost:3000/api'
-  // For physical device use your computer's IP: 'http://192.168.x.x:3000/api'
+  // Base URL - configurable via build-time environment
+  // Build with: flutter run --dart-define=API_BASE_URL=https://api.trustlit.com/api
+  static const String _baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:3000/api',
+  );
 
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
@@ -98,9 +98,11 @@ class ApiService {
       final frontImageBase64 = base64Encode(frontImageBytes);
       final backImageBase64 = base64Encode(backImageBytes);
 
-      debugPrint('Sending analysis request...');
-      debugPrint('Front image size: ${frontImageBytes.length} bytes');
-      debugPrint('Back image size: ${backImageBytes.length} bytes');
+      if (kDebugMode) {
+        debugPrint('Sending analysis request...');
+        debugPrint('Front image size: ${frontImageBytes.length} bytes');
+        debugPrint('Back image size: ${backImageBytes.length} bytes');
+      }
 
       final response = await _dio.post(
         '/analyze',
@@ -211,7 +213,6 @@ class ApiService {
     _dio.options.baseUrl = url;
   }
 
-  void dispose() {
-    _dio.close();
-  }
+  // Note: dispose() removed to prevent singleton issues
+  // The singleton Dio instance persists for app lifetime
 }

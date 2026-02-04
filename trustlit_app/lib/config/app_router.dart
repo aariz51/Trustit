@@ -89,9 +89,15 @@ class AppRouter {
         name: 'confirm',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
+          if (extra == null ||
+              extra['frontImagePath'] == null ||
+              extra['backImagePath'] == null) {
+            throw ArgumentError(
+                'ConfirmScreen requires frontImagePath and backImagePath in route extras');
+          }
           return ConfirmScreen(
-            frontImagePath: extra?['frontImagePath'] ?? '',
-            backImagePath: extra?['backImagePath'] ?? '',
+            frontImagePath: extra['frontImagePath'] as String,
+            backImagePath: extra['backImagePath'] as String,
           );
         },
       ),
@@ -102,8 +108,12 @@ class AppRouter {
         name: 'analysis',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
+          if (extra == null || extra['analysisId'] == null) {
+            throw ArgumentError(
+                'AnalysisScreen requires analysisId in route extras');
+          }
           return AnalysisScreen(
-            analysisId: extra?['analysisId'] ?? '',
+            analysisId: extra['analysisId'] as String,
           );
         },
       ),

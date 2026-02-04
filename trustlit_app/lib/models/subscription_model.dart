@@ -31,10 +31,10 @@ class SubscriptionModel {
       ),
       isActive: json['isActive'] as bool? ?? false,
       purchaseDate: json['purchaseDate'] != null
-          ? DateTime.parse(json['purchaseDate'] as String)
+          ? DateTime.tryParse(json['purchaseDate'] as String)
           : null,
       expiryDate: json['expiryDate'] != null
-          ? DateTime.parse(json['expiryDate'] as String)
+          ? DateTime.tryParse(json['expiryDate'] as String)
           : null,
     );
   }

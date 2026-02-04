@@ -50,6 +50,8 @@ class SubscriptionProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Subscription initialization error: $e');
       _error = 'Failed to initialize subscriptions';
+      _isInitialized = true; // Mark as initialized to prevent retries
+      notifyListeners();
     }
   }
 

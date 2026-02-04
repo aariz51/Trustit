@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../config/app_colors.dart';
+import '../../providers/subscription_provider.dart';
 
 /// Paywall Screen - Based on 2.png, 3.png, 4.png, 5.png, 6.png
 /// Vertically scrollable with value proposition, trial timeline, testimonials,
@@ -673,7 +676,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-              onPressed: () {},
+              onPressed: () => _launchURL('https://trustlit.app/terms'),
               child: Text(
                 'Terms',
                 style: TextStyle(
@@ -689,7 +692,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               style: TextStyle(color: AppColors.textGray),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () => _launchURL('https://trustlit.app/privacy'),
               child: Text(
                 'Privacy',
                 style: TextStyle(
@@ -707,15 +710,52 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   void _handleRestore() {
-    // TODO: Implement restore purchases
+    final subscriptionProvider = context.read<SubscriptionProvider>();
+    subscriptionProvider.restorePurchases();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Restoring purchases...')),
     );
   }
 
-  void _handlePurchase() {
-    // TODO: Implement in-app purchase
-    // For now, navigate to home screen
-    context.go('/home');
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _handlePurchase() async {
+    final subscriptionProvider = context.read<SubscriptionProvider>();
+    
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryGreen),
+      ),
+    );
+
+    bool success;
+    if (_isYearlySelected) {
+      success = await subscriptionProvider.purchaseYearly();
+    } else {
+      success = await subscriptionProvider.purchaseLifetime();
+    }
+
+    // Close loading dialog
+    if (mounted) Navigator.of(context).pop();
+
+    if (success) {
+      // Purchase successful, navigate to home
+      if (mounted) context.go('/home');
+    } else {
+      // Purchase failed or was cancelled
+      if (mounted && subscriptionProvider.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(subscriptionProvider.error!)),
+        );
+      }
+    }
   }
 }
