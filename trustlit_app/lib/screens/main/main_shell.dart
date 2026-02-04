@@ -87,26 +87,31 @@ class _BottomNavBar extends StatelessWidget {
                 onTap: () => _onItemTapped(context, 1),
               ),
               // Center Camera Button
-              GestureDetector(
-                onTap: () => _onItemTapped(context, 2),
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryGreen,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryGreen.withValues(alpha: 0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: AppColors.white,
-                    size: 28,
+              Semantics(
+                label: 'Open camera to scan product',
+                button: true,
+                onTapHint: 'Opens camera for product scanning',
+                child: GestureDetector(
+                  onTap: () => _onItemTapped(context, 2),
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryGreen,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryGreen.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: AppColors.white,
+                      size: 28,
+                    ),
                   ),
                 ),
               ),
