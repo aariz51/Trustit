@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Paywall Screen - Uses EXACT Figma design images with scrollable content
-/// and fixed pricing footer
+/// Paywall Screen - Exact Figma Design with NO white spaces
+/// Images cropped aggressively to remove all padding
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
 
@@ -11,398 +11,407 @@ class PaywallScreen extends StatefulWidget {
 }
 
 class _PaywallScreenState extends State<PaywallScreen> {
-  bool _isYearlySelected = true;
-
-  // Calculate the height to clip from each image (footer section height ratio)
-  // Based on 1792px total height, footer takes approximately 350px
-  static const double _footerHeightRatio = 350 / 1792;
+  bool isYearlySelected = true;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    // Original image dimensions: 828 x 1792
-    // Content height without footer: 1792 - 350 = 1442
-    final contentHeightRatio = 1442 / 828;
-    final imageHeight = screenWidth * contentHeightRatio;
-    
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Scrollable content using actual Figma design images
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                // Image 8.png - Header, phones, "How free trial works", Today, In 2 Days
-                _buildScrollableImage(
-                  'assets/images/paywall_content_1.png',
-                  screenWidth,
-                  imageHeight,
-                ),
-                
-                // Image 9.png - continuation with In 3 Days, rating, badges
-                _buildScrollableImage(
-                  'assets/images/paywall_content_2.png',
-                  screenWidth,
-                  imageHeight,
-                  // Clip top portion that overlaps with previous image
-                  topClipRatio: 0.35,
-                ),
-                
-                // Image 11.png - Based on 100,000+ studies section with institutions
-                // Skip image 10.png (reviews section)
-                _buildScrollableImage(
-                  'assets/images/paywall_content_3.png',
-                  screenWidth,
-                  imageHeight,
-                  // Clip top portion (reviews heading)
-                  topClipRatio: 0.25,
-                ),
-                
-                // Bottom padding to account for fixed footer
-                const SizedBox(height: 280),
-              ],
-            ),
-          ),
-          
-          // Close button overlay (on top of scrollable content)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // SCROLLABLE CONTENT
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
                   children: [
-                    GestureDetector(
-                      onTap: () => context.go('/home'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.95),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(Icons.close, size: 20, color: Colors.black54),
+                    // Top bar
+                    _buildTopBar(context),
+                    const SizedBox(height: 12),
+                    // App Logo
+                    SizedBox(
+                      width: 52,
+                      height: 52,
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    // Invisible restore button - just for spacing
-                    // The actual "Restore" text is in the image
-                    const SizedBox(width: 40),
+                    const SizedBox(height: 10),
+                    // Title
+                    const Text(
+                      'How free trial works',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    // Subtitle
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'With Reveal It, committed users saw a 90% reduction in health problems',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                          height: 1.3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    // Phone Mockups - LARGER, fully visible
+                    SizedBox(
+                      height: 300, 
+                      child: ClipRect(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          heightFactor: 0.5, // Show 50% of image (more content)
+                          child: Image.asset(
+                            'assets/images/paywall_mockups.png',
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // NO gap - Timeline starts immediately
+                    _buildTimeline(),
+                    // Studies Section - LARGER, fully visible
+                    SizedBox(
+                      height: 450, 
+                      child: ClipRect(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          heightFactor: 0.75, // Show 75% of image (more content)
+                          child: Image.asset(
+                            'assets/images/institution_logos.png',
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Small padding before footer
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
             ),
-          ),
-          
-          // Fixed footer with pricing
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildFixedFooter(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildScrollableImage(
-    String imagePath,
-    double width,
-    double height, {
-    double topClipRatio = 0,
-    double bottomClipRatio = 0,
-  }) {
-    // Calculate clipping values
-    final originalRatio = 1792 / 828;
-    final fullHeight = width * originalRatio;
-    final topClip = fullHeight * topClipRatio;
-    final bottomClip = fullHeight * (bottomClipRatio + _footerHeightRatio);
-    final visibleHeight = fullHeight - topClip - bottomClip;
-
-    return SizedBox(
-      width: width,
-      height: visibleHeight,
-      child: ClipRect(
-        child: OverflowBox(
-          alignment: Alignment.topCenter,
-          maxWidth: width,
-          maxHeight: fullHeight,
-          child: Transform.translate(
-            offset: Offset(0, -topClip),
-            child: Image.asset(
-              imagePath,
-              width: width,
-              height: fullHeight,
-              fit: BoxFit.cover,
-            ),
-          ),
+            // STICKY FOOTER
+            _buildStickyFooter(context),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildFixedFooter(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+  Widget _buildTopBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.close, size: 16, color: Colors.grey.shade500),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Text(
+              'Restore',
+              style: TextStyle(fontSize: 15, color: Colors.grey.shade400),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTimeline() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          _buildTimelineItem(
+            icon: Icons.lock_open_rounded,
+            bgColor: const Color(0xFFDCFCE7),
+            iconColor: const Color(0xFF22C55E),
+            title: 'Today',
+            subtitle: "Unlock all the app's features like product scanning, AI expert, and more.",
+            showLine: true,
+          ),
+          _buildTimelineItem(
+            icon: Icons.notifications_none_rounded,
+            bgColor: const Color(0xFFDCFCE7),
+            iconColor: const Color(0xFF22C55E),
+            title: 'In 2 Days',
+            subtitle: "We'll send you a reminder that your trial is ending soon.",
+            showLine: true,
+          ),
+          _buildTimelineItem(
+            icon: Icons.workspace_premium_rounded,
+            bgColor: const Color(0xFFFEF3C7),
+            iconColor: const Color(0xFFF59E0B),
+            title: 'In 3 Days - Billing Starts',
+            subtitle: "You'll be charged on January 05, 2026 unless you cancel anytime before.",
+            showLine: false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimelineItem({
+    required IconData icon,
+    required Color bgColor,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required bool showLine,
+  }) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 42,
+            child: Column(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+                if (showLine)
+                  Expanded(
+                    child: Container(
+                      width: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 3),
+                      color: Colors.grey.shade200,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 14, top: 2),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.35),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStickyFooter(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
       ),
       child: SafeArea(
         top: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Pricing options
+            // Pricing cards row
             Row(
               children: [
-                // Lifetime option
+                // Lifetime card
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _isYearlySelected = false),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: !_isYearlySelected
-                              ? const Color(0xFF22C55E)
-                              : Colors.grey.shade300,
-                          width: !_isYearlySelected ? 2 : 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Lifetime',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade800,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '\$119.00',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: !_isYearlySelected
-                                    ? const Color(0xFF22C55E)
-                                    : Colors.grey.shade400,
-                                width: 2,
-                              ),
-                              color: !_isYearlySelected
-                                  ? const Color(0xFF22C55E)
-                                  : Colors.transparent,
-                            ),
-                            child: !_isYearlySelected
-                                ? const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 16,
-                                  )
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ),
+                  child: _buildPricingCard(
+                    title: 'Lifetime',
+                    price: '\$119.00',
+                    isSelected: !isYearlySelected,
+                    onTap: () => setState(() => isYearlySelected = false),
                   ),
                 ),
-                const SizedBox(width: 12),
-                
-                // Yearly option
+                const SizedBox(width: 10),
+                // Yearly card with badge
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _isYearlySelected = true),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          decoration: BoxDecoration(
-                            color: _isYearlySelected
-                                ? const Color(0xFFECFDF5)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: _isYearlySelected
-                                  ? const Color(0xFF22C55E)
-                                  : Colors.grey.shade300,
-                              width: _isYearlySelected ? 2 : 1.5,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'YEARLY',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade800,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '\$3.33 /mo',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _isYearlySelected
-                                      ? const Color(0xFF22C55E)
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                    color: _isYearlySelected
-                                        ? const Color(0xFF22C55E)
-                                        : Colors.grey.shade400,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: _isYearlySelected
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: 16,
-                                      )
-                                    : null,
-                              ),
-                            ],
-                          ),
-                        ),
-                        // 3-DAY FREE TRIAL badge
-                        Positioned(
-                          top: -10,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF22C55E),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Text(
-                              '3-DAY FREE TRIAL',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.3,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildPricingCard(
+                    title: 'YEARLY',
+                    price: '\$3.33 /mo',
+                    isSelected: isYearlySelected,
+                    showBadge: true,
+                    onTap: () => setState(() => isYearlySelected = true),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            
-            // No payment due now
+            const SizedBox(height: 14),
+            // No Payment Due Now
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check, color: Colors.grey.shade700, size: 18),
+                Icon(Icons.check, color: Colors.grey.shade800, size: 20),
                 const SizedBox(width: 6),
-                Text(
+                const Text(
                   'No Payment Due Now',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700,
+                    fontSize: 15,
+                    color: Colors.black87,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            
-            // Try for $0.00 button
+            const SizedBox(height: 14),
+            // Try for $0.00 button - pill shape
             SizedBox(
               width: double.infinity,
-              height: 54,
+              height: 56,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Handle subscription
-                  context.go('/home');
-                },
+                onPressed: () => context.go('/history'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF22C55E),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(27),
+                    borderRadius: BorderRadius.circular(30), // Pill shape
                   ),
                   elevation: 0,
                 ),
                 child: const Text(
                   'Try for \$0.00',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            
             // Disclaimer text
-            Text(
+            const Text(
               '3 days FREE, then \$39.99 per year (\$3.33/month)',
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
+                fontSize: 13,
+                color: Colors.black54,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPricingCard({
+    required String title,
+    required String price,
+    required bool isSelected,
+    required VoidCallback onTap,
+    bool showBadge = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected ? const Color(0xFF22C55E) : const Color(0xFFE0E0E0),
+                width: isSelected ? 2.5 : 1.5,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      price,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                // Radio circle
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? const Color(0xFF22C55E) : Colors.white,
+                    border: Border.all(
+                      color: isSelected ? const Color(0xFF22C55E) : const Color(0xFFCCCCCC),
+                      width: 2.5,
+                    ),
+                  ),
+                  child: isSelected
+                      ? const Icon(Icons.check, color: Colors.white, size: 18)
+                      : null,
+                ),
+              ],
+            ),
+          ),
+          // 3-DAY FREE TRIAL badge
+          if (showBadge)
+            Positioned(
+              top: -12,
+              right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF22C55E),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  '3-DAY FREE TRIAL',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

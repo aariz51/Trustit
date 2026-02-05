@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// Camera Screen - Matches designs 16-19.png
 /// Full screen camera with instruction banner, capture button, and gallery access
@@ -105,6 +106,33 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
+  /// Open gallery to pick images
+  Future<void> _openGallery() async {
+    final ImagePicker picker = ImagePicker();
+    
+    try {
+      // Pick front image
+      final XFile? frontImage = await picker.pickImage(source: ImageSource.gallery);
+      if (frontImage == null) return;
+      
+      // Pick back/ingredients image
+      if (mounted) {
+        final XFile? backImage = await picker.pickImage(source: ImageSource.gallery);
+        if (backImage == null) return;
+        
+        // Navigate to confirm screen with both images
+        if (mounted) {
+          context.push('/confirm', extra: {
+            'front': frontImage.path,
+            'back': backImage.path,
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Gallery picker error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Set status bar to light for dark camera background
@@ -116,82 +144,112 @@ class _CameraScreenState extends State<CameraScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Camera Preview
+          // Camera Preview - Fill entire screen
           if (_isInitialized && _controller != null)
-            Positioned.fill(
-              child: CameraPreview(_controller!),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final size = Size(constraints.maxWidth, constraints.maxHeight);
+                var scale = size.aspectRatio * _controller!.value.aspectRatio;
+                
+                // Invert to cover screen (crop rather than letterbox)
+                if (scale < 1) scale = 1 / scale;
+                
+                return ClipRect(
+                  child: Transform.scale(
+                    scale: scale,
+                    child: Center(
+                      child: CameraPreview(_controller!),
+                    ),
+                  ),
+                );
+              },
             )
           else
             const Center(
               child: CircularProgressIndicator(color: Colors.white),
             ),
 
-          // Top controls - Close and Flash
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Close button
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  // Flash button
-                  GestureDetector(
-                    onTap: _toggleFlash,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _flashEnabled ? Icons.flash_on : Icons.flash_off,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ],
+          // White scan frame overlay
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 140),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                  width: 3,
+                ),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
           ),
 
-          // Instruction banner
+          // Close button - top left corner
           Positioned(
-            top: 100,
-            left: 24,
-            right: 24,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 26,
+                ),
               ),
-              child: Text(
-                _currentInstruction,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1A1A1A),
+            ),
+          ),
+
+          // Flash button - top right corner
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            right: 16,
+            child: GestureDetector(
+              onTap: _toggleFlash,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _flashEnabled ? Icons.flash_on : Icons.flash_off,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
+            ),
+          ),
+
+          // Instruction banner - positioned inside the scan frame at top
+          Positioned(
+            top: 120,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  _currentInstruction,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -210,9 +268,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   children: [
                     // Gallery button
                     GestureDetector(
-                      onTap: () {
-                        // Open gallery picker
-                      },
+                      onTap: _openGallery,
                       child: Container(
                         width: 48,
                         height: 48,

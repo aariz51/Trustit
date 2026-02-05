@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Onboarding Screen - 2 Swipeable Slides
-/// Solid white background to prevent any overlap from previous screens
+/// Onboarding Screen - 2 Swipeable Slides with TrustIt Header
+/// Shows product analysis examples with sliding animation
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -14,9 +14,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  // Slide images - user-provided onboarding examples
   final List<String> _slideImages = [
-    'assets/images/onboarding_bg.png',   // 4.png - Philadelphia slide
-    'assets/images/onboarding_2.png',    // 5.png - Mr. Noodles slide
+    'assets/images/onboarding_slide_1.png',  // Bolthouse Farms carrots - Score 100
+    'assets/images/onboarding_slide_2.png',  // Peanut butter - Score 48
   ];
 
   @override
@@ -28,45 +29,96 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,  // Solid white background
-      body: Container(
-        color: Colors.white,  // Ensure no transparency
-        child: Stack(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
           children: [
-            // Solid white background layer to block anything behind
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.white,
+            // TrustIt Header at top
+            Padding(
+              padding: const EdgeInsets.only(top: 24, bottom: 16),
+              child: Column(
+                children: [
+                  // TrustIt Logo/Text Header
+                  RichText(
+                    text: const TextSpan(
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Trust',
+                          style: TextStyle(color: Color(0xFF1A1A1A)),
+                        ),
+                        TextSpan(
+                          text: 'It',
+                          style: TextStyle(color: Color(0xFF22C55E)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
 
-            // PageView for swipeable slides
-            PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              itemCount: _slideImages.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  color: Colors.white,  // Each slide has white background
-                  child: Image.asset(
-                    _slideImages[index],
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.contain,  // Changed to contain to show properly
-                  ),
-                );
-              },
+            // Sliding Content Area
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                itemCount: _slideImages.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        _slideImages[index],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Fallback placeholder
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F4F6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image_outlined,
+                                  size: 80,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Slide ${index + 1}',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 18,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
 
             // Page indicators
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 140,
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -74,10 +126,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   (index) => AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: _currentPage == index ? 10 : 8,
-                    height: _currentPage == index ? 10 : 8,
+                    width: _currentPage == index ? 24 : 8,
+                    height: 8,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(4),
                       color: _currentPage == index
                           ? const Color(0xFF22C55E)
                           : const Color(0xFFD1D5DB),
@@ -88,17 +140,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
 
             // Get Started button at bottom
-            Positioned(
-              left: 48,
-              right: 48,
-              bottom: 60,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(48, 32, 48, 40),
               child: GestureDetector(
                 onTap: () => context.go('/paywall'),
                 child: Container(
+                  width: double.infinity,
                   height: 56,
                   decoration: BoxDecoration(
                     color: const Color(0xFF22C55E),
                     borderRadius: BorderRadius.circular(28),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF22C55E).withValues(alpha: 0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

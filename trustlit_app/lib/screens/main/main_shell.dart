@@ -23,30 +23,18 @@ class _BottomNavBar extends StatelessWidget {
 
   int _getCurrentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home')) return 0;
-    if (location.startsWith('/history')) return 1;
-    if (location.startsWith('/chat')) return 3;
-    if (location.startsWith('/profile')) return 4;
-    return 0;
+    if (location.startsWith('/history')) return 0;
+    return 0; // Default to history
   }
 
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/home');
-        break;
-      case 1:
         context.go('/history');
         break;
-      case 2:
+      case 1:
         // Camera button - navigate to camera screen
         context.push('/camera');
-        break;
-      case 3:
-        context.go('/chat');
-        break;
-      case 4:
-        context.go('/profile');
         break;
     }
   }
@@ -68,34 +56,28 @@ class _BottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NavItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home,
-                label: 'Home',
-                isActive: currentIndex == 0,
-                onTap: () => _onItemTapped(context, 0),
-              ),
+              // History button (left)
               _NavItem(
                 icon: Icons.history_outlined,
                 activeIcon: Icons.history,
                 label: 'History',
-                isActive: currentIndex == 1,
-                onTap: () => _onItemTapped(context, 1),
+                isActive: currentIndex == 0,
+                onTap: () => _onItemTapped(context, 0),
               ),
-              // Center Camera Button
+              // Center Camera Button (larger, FAB style)
               Semantics(
                 label: 'Open camera to scan product',
                 button: true,
                 onTapHint: 'Opens camera for product scanning',
                 child: GestureDetector(
-                  onTap: () => _onItemTapped(context, 2),
+                  onTap: () => _onItemTapped(context, 1),
                   child: Container(
-                    width: 56,
-                    height: 56,
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
                       color: AppColors.primaryGreen,
                       shape: BoxShape.circle,
@@ -110,25 +92,13 @@ class _BottomNavBar extends StatelessWidget {
                     child: const Icon(
                       Icons.camera_alt,
                       color: AppColors.white,
-                      size: 28,
+                      size: 32,
                     ),
                   ),
                 ),
               ),
-              _NavItem(
-                icon: Icons.chat_bubble_outline,
-                activeIcon: Icons.chat_bubble,
-                label: 'Chat',
-                isActive: currentIndex == 3,
-                onTap: () => _onItemTapped(context, 3),
-              ),
-              _NavItem(
-                icon: Icons.person_outline,
-                activeIcon: Icons.person,
-                label: 'Profile',
-                isActive: currentIndex == 4,
-                onTap: () => _onItemTapped(context, 4),
-              ),
+              // Placeholder for symmetry (invisible)
+              const SizedBox(width: 48),
             ],
           ),
         ),

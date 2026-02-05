@@ -1,39 +1,30 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../widgets/animated_score_widgets.dart';
+import '../../services/storage_service.dart';
 
 /// Analysis Result Screen - Matches designs 27-37.png
 /// Shows product image, scores (Safety/Efficacy/Transparency), Summary, 
 /// Ingredients list with risk levels, and expandable sections
 class AnalysisResultScreen extends StatefulWidget {
   final String? analysisId;
+  final Map<String, dynamic>? analysisData;
 
-  const AnalysisResultScreen({super.key, this.analysisId});
+  const AnalysisResultScreen({
+    super.key, 
+    this.analysisId,
+    this.analysisData,
+  });
 
   @override
   State<AnalysisResultScreen> createState() => _AnalysisResultScreenState();
 }
 
 class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
-  // Sample data - will be replaced with real data from API
-  final Map<String, dynamic> _analysisData = {
-    'productName': 'Great Value Corn Flakes',
-    'category': 'Breakfast Cereal',
-    'overallScore': 45,
-    'scoreColor': const Color(0xFFF59E0B),
-    'safety': 45,
-    'efficacy': 60,
-    'transparency': 90,
-    'summary': 'Great Value Corn Flakes is a fortified breakfast cereal that provides quick energy and essential vitamins. The product contains added sugar, riboflavin as a colorant, and the preservative BHT, which contribute to a moderate risk profile. The overall safety score is lowered mainly by sugar, artificial color, and BHT. Nutritional value is decent, but the high sugar content limits its suitability for health-conscious consumers. Transparency is high because the ingredient list is clear, though some ingredients are inferred based on typical brand formulations.',
-    'ingredients': [
-      {'name': 'Maïs moulu', 'risk': 'Low Risk', 'riskColor': const Color(0xFF22C55E)},
-      {'name': 'Extrait d\'orge maltée', 'risk': 'Low Risk', 'riskColor': const Color(0xFF22C55E)},
-      {'name': 'Sel', 'risk': 'Low Risk', 'riskColor': const Color(0xFF22C55E)},
-      {'name': 'Riboflavine (pour la couleur)', 'risk': 'Low Risk', 'riskColor': const Color(0xFF22C55E)},
-      {'name': 'Fer', 'risk': 'Low Risk', 'riskColor': const Color(0xFF22C55E)},
-    ],
-    'totalIngredients': 15,
-    'hiddenChemicals': 1,
-  };
+  final StorageService _storageService = StorageService();
+  Map<String, dynamic> _analysisData = {};
+  bool _isLoading = true;
 
   final Map<String, bool> _expandedSections = {
     'healthImpact': false,
@@ -43,6 +34,61 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
     'whatItDoes': false,
     'whatPeopleSaying': false,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    // If analysis data was passed via navigation, use it
+    if (widget.analysisData != null && widget.analysisData!.isNotEmpty) {
+      setState(() {
+        _analysisData = widget.analysisData!;
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Otherwise, try to load from storage using ID
+    if (widget.analysisId != null) {
+      final history = _storageService.getScanHistory();
+      final scan = history.where((s) => s.id == widget.analysisId).firstOrNull;
+      
+      if (scan != null) {
+        setState(() {
+          _analysisData = {
+            'productName': scan.productName,
+            'category': scan.category,
+            'overallScore': scan.overallScore,
+            'safety': scan.overallScore,
+            'efficacy': ((scan.overallScore * 1.1).clamp(0, 100)).toInt(),
+            'transparency': ((scan.overallScore * 1.3).clamp(0, 100)).toInt(),
+            'summary': 'Analysis details for ${scan.productName}',
+            'ingredients': [],
+          };
+          _isLoading = false;
+        });
+        return;
+      }
+    }
+
+    // Fallback to default sample data for demo purposes
+    setState(() {
+      _analysisData = {
+        'productName': 'Unknown Product',
+        'category': 'Product',
+        'overallScore': 50,
+        'safety': 50,
+        'efficacy': 60,
+        'transparency': 70,
+        'summary': 'No analysis data available.',
+        'ingredients': [],
+      };
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +122,9 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF22C55E)))
+          : SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,17 +132,27 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             Center(
               child: Container(
                 margin: const EdgeInsets.all(16),
-                height: 200,
+                height: 220,
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: const Color(0xFFF9FAFB),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.inventory_2_outlined,
-                    size: 80,
-                    color: Color(0xFF9CA3AF),
-                  ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: _analysisData['imagePath'] != null && 
+                         File(_analysisData['imagePath'] as String).existsSync()
+                      ? Image.file(
+                          File(_analysisData['imagePath'] as String),
+                          fit: BoxFit.contain,
+                        )
+                      : const Center(
+                          child: Icon(
+                            Icons.inventory_2_outlined,
+                            size: 80,
+                            color: Color(0xFF9CA3AF),
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -106,7 +164,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _analysisData['productName'],
+                    _analysisData['productName'] as String? ?? 'Unknown Product',
                     style: const TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 24,
@@ -116,7 +174,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _analysisData['category'],
+                    _analysisData['category'] as String? ?? 'Product',
                     style: const TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 16,
@@ -134,37 +192,22 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Overall Score Circle
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: _analysisData['scoreColor'],
-                        width: 4,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${_analysisData['overallScore']}',
-                        style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: _analysisData['scoreColor'],
-                        ),
-                      ),
-                    ),
+                  // Animated Overall Score Circle
+                  AnimatedCircularScore(
+                    score: (_analysisData['overallScore'] as num?)?.toInt() ?? 50,
+                    size: 80,
+                    strokeWidth: 6,
                   ),
                   const SizedBox(width: 24),
-                  // Score Breakdown
+                  // Animated Score Breakdown Bars
                   Expanded(
                     child: Column(
                       children: [
-                        _ScoreRow(label: 'Safety', score: _analysisData['safety']),
-                        _ScoreRow(label: 'Efficacy', score: _analysisData['efficacy']),
-                        _ScoreRow(label: 'Transparency', score: _analysisData['transparency']),
+                        AnimatedScoreBar(label: 'Safety', score: (_analysisData['safetyScore'] as num?)?.toInt() ?? (_analysisData['safety'] as num?)?.toInt() ?? 50),
+                        const SizedBox(height: 8),
+                        AnimatedScoreBar(label: 'Efficacy', score: (_analysisData['efficacyScore'] as num?)?.toInt() ?? (_analysisData['efficacy'] as num?)?.toInt() ?? 50),
+                        const SizedBox(height: 8),
+                        AnimatedScoreBar(label: 'Transparency', score: (_analysisData['transparencyScore'] as num?)?.toInt() ?? (_analysisData['transparency'] as num?)?.toInt() ?? 50),
                       ],
                     ),
                   ),
@@ -190,7 +233,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _analysisData['summary'],
+                    _analysisData['summary'] as String? ?? 'No summary available.',
                     style: const TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 14,
@@ -205,15 +248,17 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
 
             // Ingredients Section
             _IngredientsSection(
-              ingredients: List<Map<String, dynamic>>.from(_analysisData['ingredients']),
-              totalIngredients: _analysisData['totalIngredients'],
+              ingredients: _analysisData['ingredients'] != null 
+                  ? List<Map<String, dynamic>>.from(_analysisData['ingredients'] as List)
+                  : [],
+              totalIngredients: (_analysisData['totalIngredients'] as num?)?.toInt() ?? 0,
             ),
             const SizedBox(height: 16),
 
             // Expandable Sections
             _ExpandableSection(
               title: 'Health Impact',
-              subtitle: 'Great Value Corn Flakes is a fortified breakfast cereal that provides quick energy and essential vitamins. Th...',
+              subtitle: _analysisData['healthImpact'] as String? ?? 'No health impact data available.',
               isExpanded: _expandedSections['healthImpact']!,
               onTap: () => setState(() {
                 _expandedSections['healthImpact'] = !_expandedSections['healthImpact']!;
@@ -221,7 +266,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             ),
             _ExpandableSection(
               title: 'Possible Hidden Chemicals',
-              subtitle: '${_analysisData['hiddenChemicals']} hidden chemical detected',
+              subtitle: _analysisData['hiddenChemicals'] as String? ?? 'No hidden chemicals detected.',
               isExpanded: _expandedSections['possibleHiddenChemicals']!,
               onTap: () => setState(() {
                 _expandedSections['possibleHiddenChemicals'] = !_expandedSections['possibleHiddenChemicals']!;
@@ -229,7 +274,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             ),
             _ExpandableSection(
               title: 'How to Use',
-              subtitle: 'Pour desired portion into a bowl, add milk or a non-dairy alternative, and serve immediately.',
+              subtitle: _analysisData['howToUse'] as String? ?? 'Follow product directions.',
               isExpanded: _expandedSections['howToUse']!,
               onTap: () => setState(() {
                 _expandedSections['howToUse'] = !_expandedSections['howToUse']!;
@@ -237,7 +282,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             ),
             _ExpandableSection(
               title: 'The Good & Bad',
-              subtitle: 'Good as a quick breakfast option, but high in sugar and contains a preservative.',
+              subtitle: _analysisData['goodAndBad'] as String? ?? 'No pros and cons data available.',
               isExpanded: _expandedSections['goodAndBad']!,
               onTap: () => setState(() {
                 _expandedSections['goodAndBad'] = !_expandedSections['goodAndBad']!;
@@ -245,7 +290,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             ),
             _ExpandableSection(
               title: 'What it does?',
-              subtitle: 'Provides rapid energy from carbohydrates and supplies fortified vitamins and minerals.',
+              subtitle: _analysisData['whatItDoes'] as String? ?? 'No product purpose data available.',
               isExpanded: _expandedSections['whatItDoes']!,
               onTap: () => setState(() {
                 _expandedSections['whatItDoes'] = !_expandedSections['whatItDoes']!;
@@ -253,7 +298,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             ),
             _ExpandableSection(
               title: 'What People Are Saying',
-              subtitle: 'Generally well-liked for taste and convenience, though some consumers note the high sugar content and pre...',
+              subtitle: _analysisData['whatPeopleSay'] as String? ?? 'No reviews available.',
               isExpanded: _expandedSections['whatPeopleSaying']!,
               onTap: () => setState(() {
                 _expandedSections['whatPeopleSaying'] = !_expandedSections['whatPeopleSaying']!;
@@ -305,43 +350,6 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
   }
 }
 
-/// Score Row Widget
-class _ScoreRow extends StatelessWidget {
-  final String label;
-  final int score;
-
-  const _ScoreRow({required this.label, required this.score});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 14,
-              color: Color(0xFF6B7280),
-            ),
-          ),
-          Text(
-            '$score',
-            style: const TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// Ingredients Section Widget - Matches design with yellow/green background
 class _IngredientsSection extends StatelessWidget {
   final List<Map<String, dynamic>> ingredients;
@@ -351,6 +359,19 @@ class _IngredientsSection extends StatelessWidget {
     required this.ingredients,
     required this.totalIngredients,
   });
+
+  Color _getRiskColor(String riskLevel) {
+    switch (riskLevel.toLowerCase()) {
+      case 'high':
+        return const Color(0xFFEF4444); // Red
+      case 'moderate':
+      case 'medium':
+        return const Color(0xFFF59E0B); // Orange
+      case 'low':
+      default:
+        return const Color(0xFF22C55E); // Green
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -395,11 +416,16 @@ class _IngredientsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ...ingredients.map((ingredient) => _IngredientRow(
-                name: ingredient['name'],
-                risk: ingredient['risk'],
-                riskColor: ingredient['riskColor'],
-              )),
+          ...ingredients.map((ingredient) {
+            final name = ingredient['name'] as String? ?? 'Unknown';
+            final riskLevel = ingredient['riskLevel'] as String? ?? 'Low';
+            final riskColor = _getRiskColor(riskLevel);
+            return _IngredientRow(
+              name: name,
+              risk: riskLevel,
+              riskColor: riskColor,
+            );
+          }),
           if (remainingCount > 0) ...[
             const SizedBox(height: 8),
             SizedBox(

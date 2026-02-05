@@ -125,7 +125,11 @@ class AppRouter {
         name: 'analysis',
         builder: (context, state) {
           final analysisId = state.pathParameters['id'];
-          return AnalysisResultScreen(analysisId: analysisId);
+          final analysisData = state.extra as Map<String, dynamic>?;
+          return AnalysisResultScreen(
+            analysisId: analysisId,
+            analysisData: analysisData,
+          );
         },
       ),
     ],

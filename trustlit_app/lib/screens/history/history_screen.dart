@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../widgets/animated_score_widgets.dart';
+import '../../services/storage_service.dart';
+import '../../models/scan_history_model.dart';
 
 /// History Screen - Matches designs 14, 24-26.png
 /// Shows scan history empty state with clock icon or list of scanned products
@@ -11,64 +14,66 @@ class HistoryScreen extends StatefulWidget {
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
-  // Sample data - will be replaced with actual data from provider
-  final List<HistoryItem> _historyItems = [
-    HistoryItem(
-      id: '1',
-      productName: 'Treasure Chipotle A...',
-      category: 'Sauce',
-      score: 3,
-      riskLevel: 'Bad',
-      riskColor: const Color(0xFFEF4444),
-      scannedAt: DateTime.now().subtract(const Duration(minutes: 1)),
-    ),
-    HistoryItem(
-      id: '2',
-      productName: 'CHOCOLATE SYRUP',
-      category: 'Dessert',
-      score: 15,
-      riskLevel: 'Bad',
-      riskColor: const Color(0xFFEF4444),
-      scannedAt: DateTime.now().subtract(const Duration(minutes: 2)),
-    ),
-    HistoryItem(
-      id: '3',
-      productName: 'PHILADELPHIA CRE...',
-      category: 'Dairy',
-      score: 95,
-      riskLevel: 'Excellent',
-      riskColor: const Color(0xFF22C55E),
-      scannedAt: DateTime.now().subtract(const Duration(minutes: 3)),
-    ),
-    HistoryItem(
-      id: '4',
-      productName: 'Cremeux Légè Pean...',
-      category: 'Spread',
-      score: 60,
-      riskLevel: 'Average',
-      riskColor: const Color(0xFFF59E0B),
-      scannedAt: DateTime.now().subtract(const Duration(minutes: 5)),
-    ),
-    HistoryItem(
-      id: '5',
-      productName: 'Natrel Fine-filtered ...',
-      category: 'Dairy',
-      score: 65,
-      riskLevel: 'Average',
-      riskColor: const Color(0xFFF59E0B),
-      scannedAt: DateTime.now().subtract(const Duration(minutes: 6)),
-    ),
-    HistoryItem(
-      id: '6',
-      productName: 'Great Value Corn Fl...',
-      category: 'Cereal',
-      score: 45,
-      riskLevel: 'Medium',
-      riskColor: const Color(0xFFF59E0B),
-      scannedAt: DateTime.now().subtract(const Duration(minutes: 8)),
-    ),
-  ];
+class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserver {
+  final StorageService _storageService = StorageService();
+  List<ScanHistoryModel> _historyItems = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _loadHistory();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadHistory();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh when screen becomes visible
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    try {
+      final items = _storageService.getScanHistory();
+      if (mounted) {
+        setState(() {
+          _historyItems = items;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading history: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Color _getScoreColor(int score) {
+    if (score < 40) {
+      return const Color(0xFFEF4444); // Red
+    } else if (score < 70) {
+      return const Color(0xFFF59E0B); // Yellow/Orange
+    } else {
+      return const Color(0xFF22C55E); // Green
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +99,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
         ],
       ),
-      body: _historyItems.isEmpty
-          ? _buildEmptyState()
-          : _buildHistoryList(),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF22C55E)))
+          : _historyItems.isEmpty
+              ? _buildEmptyState()
+              : _buildHistoryList(),
     );
   }
 
@@ -155,47 +162,52 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   /// History list view - matches design 24-25.png
   Widget _buildHistoryList() {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: _historyItems.length,
-      itemBuilder: (context, index) {
-        final item = _historyItems[index];
-        return Dismissible(
-          key: Key(item.id),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.only(right: 16),
-            color: const Color(0xFFEF4444),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Icon(Icons.delete, color: Colors.white),
-                const SizedBox(width: 8),
-                const Text(
-                  'Delete',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+    return RefreshIndicator(
+      onRefresh: _loadHistory,
+      color: const Color(0xFF22C55E),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        itemCount: _historyItems.length,
+        itemBuilder: (context, index) {
+          final item = _historyItems[index];
+          return Dismissible(
+            key: Key(item.id),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 16),
+              color: const Color(0xFFEF4444),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.delete, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text(
+                    'Delete',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          confirmDismiss: (direction) => _showDeleteConfirmDialog(item),
-          onDismissed: (direction) => _deleteItem(item),
-          child: _HistoryListItem(
-            item: item,
-            onTap: () => context.push('/analysis/${item.id}'),
-          ),
-        );
-      },
+            confirmDismiss: (direction) => _showDeleteConfirmDialog(item),
+            onDismissed: (direction) => _deleteItem(item),
+            child: _HistoryListItem(
+              item: item,
+              scoreColor: _getScoreColor(item.overallScore),
+              onTap: () => context.push('/analysis/${item.id}'),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Future<bool?> _showDeleteConfirmDialog(HistoryItem item) {
+  Future<bool?> _showDeleteConfirmDialog(ScanHistoryModel item) {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -238,7 +250,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  void _deleteItem(HistoryItem item) {
+  Future<void> _deleteItem(ScanHistoryModel item) async {
+    await _storageService.deleteScanHistory(item.id);
     setState(() {
       _historyItems.removeWhere((i) => i.id == item.id);
     });
@@ -272,8 +285,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
+              await _storageService.clearScanHistory();
               setState(() {
                 _historyItems.clear();
               });
@@ -293,36 +307,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 }
 
-/// History Item Data Model
-class HistoryItem {
-  final String id;
-  final String productName;
-  final String category;
-  final int score;
-  final String riskLevel;
-  final Color riskColor;
-  final DateTime scannedAt;
-  final String? imageUrl;
-
-  const HistoryItem({
-    required this.id,
-    required this.productName,
-    required this.category,
-    required this.score,
-    required this.riskLevel,
-    required this.riskColor,
-    required this.scannedAt,
-    this.imageUrl,
-  });
-}
-
-/// History list item - matches design 24.png exactly
+/// History list item widget
 class _HistoryListItem extends StatelessWidget {
-  final HistoryItem item;
+  final ScanHistoryModel item;
+  final Color scoreColor;
   final VoidCallback onTap;
 
   const _HistoryListItem({
     required this.item,
+    required this.scoreColor,
     required this.onTap,
   });
 
@@ -378,17 +371,17 @@ class _HistoryListItem extends StatelessWidget {
                         width: 8,
                         height: 8,
                         decoration: BoxDecoration(
-                          color: item.riskColor,
+                          color: scoreColor,
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        item.riskLevel,
+                        item.ratingLabel,
                         style: TextStyle(
                           fontFamily: 'Outfit',
                           fontSize: 12,
-                          color: item.riskColor,
+                          color: scoreColor,
                         ),
                       ),
                     ],
@@ -406,28 +399,11 @@ class _HistoryListItem extends StatelessWidget {
               ),
             ),
 
-            // Score circle
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: item.riskColor,
-                  width: 3,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  '${item.score}',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: item.riskColor,
-                  ),
-                ),
-              ),
+            // Animated Score circle
+            AnimatedCircularScore(
+              score: item.overallScore,
+              size: 48,
+              strokeWidth: 3,
             ),
 
             const SizedBox(width: 8),

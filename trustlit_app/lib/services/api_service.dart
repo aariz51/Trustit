@@ -25,17 +25,21 @@ class ApiService {
   // For physical device on local network, use your computer's IP
   static const String _baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://192.168.1.23:3000/api',
+    defaultValue: 'http://192.168.29.229:3000/api',
   );
 
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
   ApiService._internal();
 
-  late final Dio _dio;
+  Dio? _dio;
+  bool _isInitialized = false;
 
   /// Initialize the API service
   void initialize() {
+    // Prevent re-initialization
+    if (_isInitialized) return;
+    
     _dio = Dio(BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 30),
@@ -47,18 +51,20 @@ class ApiService {
 
     // Add logging interceptor for debug builds
     if (kDebugMode) {
-      _dio.interceptors.add(LogInterceptor(
+      _dio!.interceptors.add(LogInterceptor(
         requestBody: false, // Don't log large base64 images
         responseBody: true,
         logPrint: (obj) => debugPrint(obj.toString()),
       ));
     }
+    
+    _isInitialized = true;
   }
 
   /// Check if the backend is healthy
   Future<ApiResponse<Map<String, dynamic>>> healthCheck() async {
     try {
-      final response = await _dio.get('/health');
+      final response = await _dio!.get('/health');
 
       if (response.statusCode == 200) {
         return ApiResponse(
@@ -105,7 +111,7 @@ class ApiService {
         debugPrint('Back image size: ${backImageBytes.length} bytes');
       }
 
-      final response = await _dio.post(
+      final response = await _dio!.post(
         '/analyze',
         data: {
           'frontImageBase64': frontImageBase64,
@@ -157,7 +163,7 @@ class ApiService {
         ),
       });
 
-      final response = await _dio.post('/analyze', data: formData);
+      final response = await _dio!.post('/analyze', data: formData);
       final responseData = response.data;
 
       if (response.statusCode == 200 && responseData['success'] == true) {
@@ -211,7 +217,7 @@ class ApiService {
 
   /// Update base URL (useful for switching between dev/prod)
   void setBaseUrl(String url) {
-    _dio.options.baseUrl = url;
+    _dio!.options.baseUrl = url;
   }
 
   // Note: dispose() removed to prevent singleton issues

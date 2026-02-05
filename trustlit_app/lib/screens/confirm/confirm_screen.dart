@@ -180,25 +180,30 @@ class ConfirmScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28),
                           ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.document_scanner_outlined,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Start Analysis',
-                              style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                        child: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.document_scanner_outlined,
+                                color: Colors.white,
+                                size: 18,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 6),
+                              Text(
+                                'Start Analysis',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

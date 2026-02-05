@@ -130,18 +130,74 @@ router.post('/', upload.fields([
             });
         }
 
-        console.log(`Analyzing ${productType} product...`);
+        // Validate base64 images
+        const isValidBase64 = (str) => {
+            try {
+                // Check if it's a valid base64 string
+                return str && str.length > 1000 && /^[A-Za-z0-9+/=]+$/.test(str.substring(0, 100));
+            } catch (e) {
+                return false;
+            }
+        };
 
-        // Call OpenAI GPT-4 Vision
+        if (!isValidBase64(frontImageBase64) || !isValidBase64(backImageBase64)) {
+            console.log('Invalid base64 format detected');
+            console.log('Front starts with:', frontImageBase64?.substring(0, 50));
+            console.log('Back starts with:', backImageBase64?.substring(0, 50));
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid image data format',
+            });
+        }
+
+        console.log(`Analyzing ${productType} product...`);
+        console.log(`Front image base64 length: ${frontImageBase64.length}`);
+        console.log(`Back image base64 length: ${backImageBase64.length}`);
+
+        // Call OpenAI GPT-4o Vision
         const response = await openai.chat.completions.create({
             model: 'gpt-4o',
             messages: [
+                {
+                    role: 'system',
+                    content: 'You are a product safety analyst. You MUST analyze the images provided and return ONLY valid JSON. Do not include any explanation text, markdown formatting, or code blocks. Just the raw JSON object.'
+                },
                 {
                     role: 'user',
                     content: [
                         {
                             type: 'text',
-                            text: `${ANALYSIS_PROMPT}\n\nProduct Type: ${productType}`,
+                            text: `Analyze these ${productType} product images. The first image is the front of the product, and the second image shows the ingredients/nutrition label on the back. Extract all visible information and provide a safety analysis.
+
+Return a JSON object with this EXACT structure (no markdown, no code blocks, just JSON):
+{
+  "productName": "Name visible on product",
+  "category": "Food/Cosmetic/Supplement/etc",
+  "overallScore": 75,
+  "safetyScore": 70,
+  "efficacyScore": 80,
+  "transparencyScore": 85,
+  "summary": "2-3 sentence product safety summary",
+  "ingredients": [
+    {
+      "name": "Ingredient name",
+      "riskLevel": "Low|Medium|High",
+      "alsoKnownAs": "Common name or null",
+      "whyThisRisk": "Risk explanation",
+      "description": "What this ingredient does"
+    }
+  ],
+  "healthImpact": "Health impact analysis",
+  "shortTermEffects": "Short-term effects",
+  "longTermEffects": "Long-term effects",
+  "hiddenChemicals": "Hidden ingredients or null",
+  "howToUse": "Usage instructions",
+  "goodAndBad": "Pros and cons",
+  "whatItDoes": "Product purpose",
+  "whatPeopleSay": "General reputation"
+}
+
+Score Guidelines: 76-100=Excellent, 51-75=Good, 26-50=Concerning, 0-25=Avoid`,
                         },
                         {
                             type: 'image_url',
@@ -161,7 +217,7 @@ router.post('/', upload.fields([
                 },
             ],
             max_tokens: 4096,
-            temperature: 0.3,
+            temperature: 0.2,
         });
 
         // Parse the response
