@@ -35,7 +35,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       width: 52,
                       height: 52,
                       child: Image.asset(
-                        'assets/images/logo.png',
+                        'assets/images/app_icon.png',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -55,7 +55,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        'With Reveal It, committed users saw a 90% reduction in health problems',
+                        'With TrustIt, committed users saw a 90% reduction in health problems',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black54,
@@ -80,13 +80,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ),
                     // NO gap - Timeline starts immediately
                     _buildTimeline(),
-                    // Studies Section - LARGER, fully visible
+                    // Studies Section - compact
                     SizedBox(
-                      height: 450, 
+                      height: 320, 
                       child: ClipRect(
                         child: Align(
                           alignment: Alignment.topCenter,
-                          heightFactor: 0.75, // Show 75% of image (more content)
+                          heightFactor: 0.85, // Show more content, less whitespace
                           child: Image.asset(
                             'assets/images/institution_logos.png',
                             fit: BoxFit.fitWidth,
@@ -199,7 +199,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     child: Container(
                       width: 2,
                       margin: const EdgeInsets.symmetric(vertical: 3),
-                      color: Colors.grey.shade200,
+                      color: const Color(0xFF22C55E), // Green connecting line
                     ),
                   ),
               ],

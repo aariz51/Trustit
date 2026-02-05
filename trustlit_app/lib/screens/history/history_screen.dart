@@ -108,51 +108,63 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
     );
   }
 
-  /// Empty state - matches design 14.png exactly
+  /// Empty state - matches design 14.png exactly - with pull-to-refresh
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Clock icon in green circle
-          Container(
-            width: 100,
-            height: 100,
-            decoration: const BoxDecoration(
-              color: Color(0xFFDCFCE7),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.access_time_rounded,
-              size: 48,
-              color: Color(0xFF22C55E),
-            ),
-          ),
-          const SizedBox(height: 24),
+    return RefreshIndicator(
+      onRefresh: _loadHistory,
+      color: const Color(0xFF22C55E),
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Clock icon in green circle
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFDCFCE7),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.access_time_rounded,
+                      size: 48,
+                      color: Color(0xFF22C55E),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
-          // Title
-          const Text(
-            'No Scan History Yet',
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 8),
+                  // Title
+                  const Text(
+                    'No Scan History Yet',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A1A),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
 
-          // Subtitle
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 48),
-            child: Text(
-              'Start scanning products to see\nyour analysis history here',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 16,
-                color: Color(0xFF6B7280),
-                height: 1.4,
+                  // Subtitle
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 48),
+                    child: Text(
+                      'Start scanning products to see\nyour analysis history here\n\nPull down to refresh',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 16,
+                        color: Color(0xFF6B7280),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
