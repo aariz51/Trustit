@@ -29,22 +29,22 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   children: [
                     // Top bar
                     _buildTopBar(context),
-                    const SizedBox(height: 12),
-                    // App Logo
+                    const SizedBox(height: 8),
+                    // App Logo - much larger
                     SizedBox(
-                      width: 52,
-                      height: 52,
+                      width: 90,
+                      height: 90,
                       child: Image.asset(
                         'assets/images/app_icon.png',
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    // Title
+                    const SizedBox(height: 12),
+                    // Title - much larger
                     const Text(
                       'How free trial works',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 32,
                         fontWeight: FontWeight.w800,
                         color: Colors.black,
                         letterSpacing: -0.5,
@@ -64,13 +64,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    // Phone Mockups - LARGER, fully visible
+                    // Phone Mockups - pulled up for timeline visibility
                     SizedBox(
-                      height: 300, 
+                      height: 240, 
                       child: ClipRect(
                         child: Align(
                           alignment: Alignment.topCenter,
-                          heightFactor: 0.5, // Show 50% of image (more content)
+                          heightFactor: 0.45, // Show top part
                           child: Image.asset(
                             'assets/images/paywall_mockups.png',
                             fit: BoxFit.fitWidth,
@@ -78,8 +78,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         ),
                       ),
                     ),
-                    // NO gap - Timeline starts immediately
+                    // Timeline immediately after mockups
                     _buildTimeline(),
+                    // Gap before studies section
+                    const SizedBox(height: 20),
                     // Studies Section - compact
                     SizedBox(
                       height: 320, 
@@ -145,24 +147,24 @@ class _PaywallScreenState extends State<PaywallScreen> {
         children: [
           _buildTimelineItem(
             icon: Icons.lock_open_rounded,
-            bgColor: const Color(0xFFDCFCE7),
-            iconColor: const Color(0xFF22C55E),
+            bgColor: const Color(0xFF22C55E), // Green background
+            iconColor: Colors.white, // White icon
             title: 'Today',
             subtitle: "Unlock all the app's features like product scanning, AI expert, and more.",
             showLine: true,
           ),
           _buildTimelineItem(
             icon: Icons.notifications_none_rounded,
-            bgColor: const Color(0xFFDCFCE7),
-            iconColor: const Color(0xFF22C55E),
+            bgColor: const Color(0xFF22C55E), // Green background
+            iconColor: Colors.white, // White icon
             title: 'In 2 Days',
             subtitle: "We'll send you a reminder that your trial is ending soon.",
             showLine: true,
           ),
           _buildTimelineItem(
             icon: Icons.workspace_premium_rounded,
-            bgColor: const Color(0xFFFEF3C7),
-            iconColor: const Color(0xFFF59E0B),
+            bgColor: const Color(0xFF22C55E), // Green background
+            iconColor: Colors.white, // White icon
             title: 'In 3 Days - Billing Starts',
             subtitle: "You'll be charged on January 05, 2026 unless you cancel anytime before.",
             showLine: false,
@@ -208,7 +210,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           const SizedBox(width: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 14, top: 2),
+              padding: const EdgeInsets.only(bottom: 28, top: 2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

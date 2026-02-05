@@ -76,28 +76,28 @@ class _SplashScreenState extends State<SplashScreen>
                   // Logo Image - fetched from assets (app_icon.png)
                   Image.asset(
                     'assets/images/app_icon.png',
-                    width: 180,
-                    height: 180,
+                    width: 220,
+                    height: 220,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       debugPrint('Splash logo error: $error');
                       // Fallback if image not found
                       return Container(
-                        width: 180,
-                        height: 180,
+                        width: 220,
+                        height: 220,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.grey[200],
                         ),
                         child: const Icon(
                           Icons.search,
-                          size: 80,
+                          size: 100,
                           color: Color(0xFF22C55E),
                         ),
                       );
                     },
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   // TrustIt Text
                   RichText(
                     text: const TextSpan(
