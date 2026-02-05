@@ -92,22 +92,30 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          // Redirect to history instead of going back to camera flow
+          context.go('/history');
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
-          onPressed: () => context.pop(),
-        ),
-        centerTitle: true,
-        title: RichText(
-          text: const TextSpan(
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
+            onPressed: () => context.go('/history'),
+          ),
+          centerTitle: true,
+          title: RichText(
+            text: const TextSpan(
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
             ),
             children: [
               TextSpan(
@@ -334,6 +342,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
           ],
         ),
       ),
+    ),  // Close PopScope
     );
   }
 

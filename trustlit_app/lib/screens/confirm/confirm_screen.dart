@@ -35,7 +35,7 @@ class ConfirmScreen extends StatelessWidget {
             ),
             children: [
               TextSpan(
-                text: 'Reveal',
+                text: 'Trust',
                 style: TextStyle(color: Color(0xFF1A1A1A)),
               ),
               TextSpan(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../services/api_service.dart';
 import '../../services/storage_service.dart';
 import '../../models/scan_history_model.dart';
+import '../../models/analysis_result_model.dart';
 
 /// Analyzing Screen - Shows loading animation while product is being analyzed
 class AnalyzingScreen extends StatefulWidget {
@@ -91,7 +92,7 @@ class _AnalyzingScreenState extends State<AnalyzingScreen>
         final productName = data['productName'] as String? ?? 'Unknown Product';
         final category = data['category'] as String? ?? 'Product';
 
-        // Create scan history entry
+        // Create scan history entry with full analysis data
         final scanEntry = ScanHistoryModel(
           id: analysisId,
           productName: productName,
@@ -99,6 +100,7 @@ class _AnalyzingScreenState extends State<AnalyzingScreen>
           overallScore: overallScore,
           ratingLabel: ScanHistoryModel.getRatingFromScore(overallScore),
           thumbnailPath: widget.frontImagePath,
+          fullAnalysis: AnalysisResultModel.fromJson(data),
           scannedAt: DateTime.now(),
         );
 

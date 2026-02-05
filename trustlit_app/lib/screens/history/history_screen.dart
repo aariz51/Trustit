@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/animated_score_widgets.dart';
@@ -199,7 +200,15 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
             child: _HistoryListItem(
               item: item,
               scoreColor: _getScoreColor(item.overallScore),
-              onTap: () => context.push('/analysis/${item.id}'),
+              onTap: () {
+                // Pass the full analysis data to the result screen
+                final analysisData = item.fullAnalysis?.toJson() ?? {};
+                analysisData['imagePath'] = item.thumbnailPath;
+                analysisData['productName'] = item.productName;
+                analysisData['category'] = item.category;
+                analysisData['overallScore'] = item.overallScore;
+                context.push('/analysis/${item.id}', extra: analysisData);
+              },
             ),
           );
         },
@@ -332,18 +341,36 @@ class _HistoryListItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Product thumbnail
+            // Product thumbnail - shows actual scanned image
             Container(
-              width: 48,
-              height: 48,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
                 color: const Color(0xFFF3F4F6),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(
-                Icons.inventory_2_outlined,
-                size: 24,
-                color: Color(0xFF9CA3AF),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: item.thumbnailPath != null && 
+                       File(item.thumbnailPath!).existsSync()
+                    ? Image.file(
+                        File(item.thumbnailPath!),
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.inventory_2_outlined,
+                            size: 24,
+                            color: Color(0xFF9CA3AF),
+                          );
+                        },
+                      )
+                    : const Icon(
+                        Icons.inventory_2_outlined,
+                        size: 24,
+                        color: Color(0xFF9CA3AF),
+                      ),
               ),
             ),
             const SizedBox(width: 12),
