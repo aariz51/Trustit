@@ -13,6 +13,8 @@ const fs = require('fs');
 // Import routes
 const analyzeRoute = require('./routes/analyze');
 const healthRoute = require('./routes/health');
+const aiChatRoute = require('./routes/ai_chat');
+const verifyReceiptRoute = require('./routes/verify-receipt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +33,8 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/health', healthRoute);
 app.use('/api/analyze', analyzeRoute);
+app.use('/api/ai-chat', aiChatRoute);
+app.use('/api/verify-receipt', verifyReceiptRoute);
 
 // Root route
 app.get('/', (req, res) => {
@@ -41,6 +45,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       analyze: '/api/analyze (POST)',
+      aiChat: '/api/ai-chat (POST)',
     },
   });
 });

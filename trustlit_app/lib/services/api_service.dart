@@ -220,6 +220,24 @@ class ApiService {
     _dio!.options.baseUrl = url;
   }
 
+  /// Send message to AI Assistant
+  Future<String> sendAIChat(String message) async {
+    try {
+      final response = await _dio!.post('/ai-chat', data: {
+        'message': message,
+      });
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return response.data['response'] as String;
+      } else {
+        return response.data['error'] ?? 'Failed to get AI response';
+      }
+    } on DioException catch (e) {
+      debugPrint('AI Chat Error: ${e.message}');
+      return 'Sorry, I am having trouble connecting. Please try again.';
+    }
+  }
+
   // Note: dispose() removed to prevent singleton issues
   // The singleton Dio instance persists for app lifetime
 }

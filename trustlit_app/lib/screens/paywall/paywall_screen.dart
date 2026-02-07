@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../services/subscription_service.dart';
 
-/// Paywall Screen - Exact Figma Design with NO white spaces
-/// Images cropped aggressively to remove all padding
+/// Paywall Screen - Exact Figma Design with In-App Purchase Integration
+/// Supports:
+/// - 3-day free trial that converts to yearly subscription
+/// - Yearly subscription ($29.99/year)
+/// - Lifetime purchase ($59.99 one-time)
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
 
@@ -12,6 +16,86 @@ class PaywallScreen extends StatefulWidget {
 
 class _PaywallScreenState extends State<PaywallScreen> {
   bool isYearlySelected = true;
+  bool _isLoading = false;
+  final SubscriptionService _subscriptionService = SubscriptionService();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSubscriptionService();
+  }
+
+  Future<void> _initializeSubscriptionService() async {
+    await _subscriptionService.initialize();
+    if (mounted) setState(() {});
+  }
+
+
+  /// Restore previous purchases
+  Future<void> _restorePurchases() async {
+    setState(() => _isLoading = true);
+
+    try {
+      await _subscriptionService.restorePurchases();
+      
+      // Check if subscription was restored
+      await Future.delayed(const Duration(seconds: 2));
+      
+      if (mounted) {
+        if (_subscriptionService.hasActiveSubscription()) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Purchases restored successfully!')),
+          );
+          context.go('/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No purchases found to restore')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Restore failed: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  /// Start free trial and navigate to home
+  Future<void> _startFreeTrial() async {
+    setState(() => _isLoading = true);
+
+    try {
+      if (isYearlySelected) {
+        // For yearly plan, initiate purchase (Apple handles the trial)
+        final success = await _subscriptionService.purchaseYearly();
+        if (success && mounted) {
+          // Purchase initiated, wait for result
+        }
+      } else {
+        // For lifetime, just purchase (no trial)
+        final success = await _subscriptionService.purchaseLifetime();
+        if (success && mounted) {
+          // Purchase initiated, wait for result
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +162,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         ),
                       ),
                     ),
-                    // Timeline immediately after mockups
-                    _buildTimeline(),
+                    // Timeline Section - using image for exact design
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Image.asset(
+                        'assets/images/timeline_section.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                     // Gap before studies section
                     const SizedBox(height: 20),
                     // Studies Section - compact
@@ -129,101 +219,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: _isLoading ? null : _restorePurchases,
             child: Text(
               'Restore',
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade400),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimeline() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          _buildTimelineItem(
-            icon: Icons.lock_open_rounded,
-            bgColor: const Color(0xFF22C55E), // Green background
-            iconColor: Colors.white, // White icon
-            title: 'Today',
-            subtitle: "Unlock all the app's features like product scanning, AI expert, and more.",
-            showLine: true,
-          ),
-          _buildTimelineItem(
-            icon: Icons.notifications_none_rounded,
-            bgColor: const Color(0xFF22C55E), // Green background
-            iconColor: Colors.white, // White icon
-            title: 'In 2 Days',
-            subtitle: "We'll send you a reminder that your trial is ending soon.",
-            showLine: true,
-          ),
-          _buildTimelineItem(
-            icon: Icons.workspace_premium_rounded,
-            bgColor: const Color(0xFF22C55E), // Green background
-            iconColor: Colors.white, // White icon
-            title: 'In 3 Days - Billing Starts',
-            subtitle: "You'll be charged on January 05, 2026 unless you cancel anytime before.",
-            showLine: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimelineItem({
-    required IconData icon,
-    required Color bgColor,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required bool showLine,
-  }) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 42,
-            child: Column(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-                  child: Icon(icon, color: iconColor, size: 20),
-                ),
-                if (showLine)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 3),
-                      color: const Color(0xFF22C55E), // Green connecting line
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 28, top: 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.35),
-                  ),
-                ],
+              style: TextStyle(
+                fontSize: 15, 
+                color: _isLoading ? Colors.grey.shade300 : Colors.grey.shade400,
               ),
             ),
           ),
@@ -233,6 +234,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildStickyFooter(BuildContext context) {
+    // Get prices from subscription service
+    final yearlyPrice = _subscriptionService.getYearlyPrice();
+    final lifetimePrice = _subscriptionService.getLifetimePrice();
+    
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       decoration: const BoxDecoration(
@@ -251,7 +256,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 Expanded(
                   child: _buildPricingCard(
                     title: 'Lifetime',
-                    price: '\$119.00',
+                    price: lifetimePrice,
                     isSelected: !isYearlySelected,
                     onTap: () => setState(() => isYearlySelected = false),
                   ),
@@ -261,7 +266,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 Expanded(
                   child: _buildPricingCard(
                     title: 'YEARLY',
-                    price: '\$3.33 /mo',
+                    price: yearlyPrice,
                     isSelected: isYearlySelected,
                     showBadge: true,
                     onTap: () => setState(() => isYearlySelected = true),
@@ -276,9 +281,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
               children: [
                 Icon(Icons.check, color: Colors.grey.shade800, size: 20),
                 const SizedBox(width: 6),
-                const Text(
-                  'No Payment Due Now',
-                  style: TextStyle(
+                Text(
+                  isYearlySelected 
+                      ? 'No Payment Due Now' 
+                      : 'One-time Payment',
+                  style: const TextStyle(
                     fontSize: 15,
                     color: Colors.black87,
                     fontWeight: FontWeight.w500,
@@ -292,29 +299,41 @@ class _PaywallScreenState extends State<PaywallScreen> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () => context.go('/history'),
+                onPressed: _isLoading ? null : _startFreeTrial,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF22C55E),
                   foregroundColor: Colors.white,
+                  disabledBackgroundColor: Colors.grey.shade300,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30), // Pill shape
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  'Try for \$0.00',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        isYearlySelected ? 'Try for \$0.00' : 'Buy Lifetime Access',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 10),
             // Disclaimer text
-            const Text(
-              '3 days FREE, then \$39.99 per year (\$3.33/month)',
-              style: TextStyle(
+            Text(
+              isYearlySelected 
+                  ? '3 days FREE, then $yearlyPrice/year'
+                  : 'One-time purchase, unlimited access',
+              style: const TextStyle(
                 fontSize: 13,
                 color: Colors.black54,
               ),

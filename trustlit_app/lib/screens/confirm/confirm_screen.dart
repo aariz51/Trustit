@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../services/analysis_notification_service.dart';
 
 /// Confirm Screen - Matches designs 20-22.png
 /// Shows front and back images side by side with Retake and Start Analysis buttons
@@ -167,11 +168,12 @@ class ConfirmScreen extends StatelessWidget {
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Navigate to analysis screen
-                          context.push('/analyzing', extra: {
-                            'front': frontImagePath,
-                            'back': backImagePath,
-                          });
+                          // Start background analysis and go to home
+                          AnalysisNotificationService().startAnalysis(
+                            frontImagePath: frontImagePath,
+                            backImagePath: backImagePath,
+                          );
+                          context.go('/home');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF22C55E),

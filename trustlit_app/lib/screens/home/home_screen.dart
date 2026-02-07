@@ -17,12 +17,12 @@ class HomeScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 16),
 
-              // RevealIt Header
+              // TrustIt Header Logo
               Center(
                 child: SizedBox(
                   height: 40,
                   child: Image.asset(
-                    'assets/images/logo.png',
+                    'assets/images/app_icon.png',
                     fit: BoxFit.contain,
                   ),
                 ),

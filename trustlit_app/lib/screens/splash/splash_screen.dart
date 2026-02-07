@@ -68,58 +68,58 @@ class _SplashScreenState extends State<SplashScreen>
         child: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logo Image - fetched from assets (app_icon.png)
-                  Image.asset(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Logo Image - only logo zooms
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Image.asset(
                     'assets/images/app_icon.png',
-                    width: 220,
-                    height: 220,
+                    width: 160,
+                    height: 160,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       debugPrint('Splash logo error: $error');
                       // Fallback if image not found
                       return Container(
-                        width: 220,
-                        height: 220,
+                        width: 160,
+                        height: 160,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.grey[200],
                         ),
                         child: const Icon(
                           Icons.search,
-                          size: 100,
+                          size: 72,
                           color: Color(0xFF22C55E),
                         ),
                       );
                     },
                   ),
-                  const SizedBox(height: 24),
-                  // TrustIt Text
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Trust',
-                          style: TextStyle(color: Color(0xFF1A1A1A)),
-                        ),
-                        TextSpan(
-                          text: 'It',
-                          style: TextStyle(color: Color(0xFF22C55E)),
-                        ),
-                      ],
+                ),
+                const SizedBox(height: 24),
+                // TrustIt Text - no zoom, just fade
+                RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
                     ),
+                    children: [
+                      TextSpan(
+                        text: 'Trust',
+                        style: TextStyle(color: Color(0xFF1A1A1A)),
+                      ),
+                      TextSpan(
+                        text: 'It',
+                        style: TextStyle(color: Color(0xFF22C55E)),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

@@ -167,17 +167,40 @@ router.post('/', upload.fields([
                     content: [
                         {
                             type: 'text',
-                            text: `Analyze these ${productType} product images. The first image is the front of the product, and the second image shows the ingredients/nutrition label on the back. Extract all visible information and provide a safety analysis.
+                            text: `Analyze these ${productType} product images. The first image is the front of the product, and the second image shows the ingredients/nutrition label on the back.
+
+CRITICAL SCORING RULES - YOU MUST FOLLOW THESE STRICTLY:
+
+PROCESSED FOOD PENALTY (MANDATORY):
+- Chips, crackers, cookies, candy, sodas, instant noodles, frozen pizzas, and similar processed snacks MUST have LOW scores
+- If product contains seed oils (sunflower, canola, vegetable), sugar, artificial flavors, or preservatives = Safety score MUST be below 40
+- Ultra-processed foods should NEVER score above 40 for safety
+- Natural/organic whole foods can score 70-100
+
+SAFETY SCORING (Health Impact):
+- 70-100: Only for whole foods like fruits, vegetables, nuts, eggs, pure dairy with no additives
+- 40-70: Minimally processed with some concerns (like bread with preservatives)  
+- 20-40: Processed snacks, chips, sugary drinks, foods with seed oils and additives
+- 0-20: Highly processed with multiple harmful chemicals
+
+EFFICACY SCORING (Nutritional Value):
+- Does it provide genuine nutrition or just empty calories?
+- Chips and candy = 30-50 (low nutritional value)
+- Whole foods with vitamins/minerals = 70-100
+
+TRANSPARENCY SCORING (Brand Honesty):
+- Does the brand clearly disclose all ingredients?
+- Are there hidden "natural flavors" or unclear additives?
 
 Return a JSON object with this EXACT structure (no markdown, no code blocks, just JSON):
 {
   "productName": "Name visible on product",
   "category": "Food/Cosmetic/Supplement/etc",
-  "overallScore": 75,
-  "safetyScore": 70,
-  "efficacyScore": 80,
-  "transparencyScore": 85,
-  "summary": "2-3 sentence product safety summary",
+  "overallScore": 30,
+  "safetyScore": 25,
+  "efficacyScore": 40,
+  "transparencyScore": 50,
+  "summary": "2-3 sentence product safety summary - BE HONEST about processed food concerns",
   "ingredients": [
     {
       "name": "Ingredient name",
@@ -187,7 +210,7 @@ Return a JSON object with this EXACT structure (no markdown, no code blocks, jus
       "description": "What this ingredient does"
     }
   ],
-  "healthImpact": "Health impact analysis",
+  "healthImpact": "Health impact analysis - be critical of processed foods",
   "shortTermEffects": "Short-term effects",
   "longTermEffects": "Long-term effects",
   "hiddenChemicals": "Hidden ingredients or null",
@@ -197,7 +220,7 @@ Return a JSON object with this EXACT structure (no markdown, no code blocks, jus
   "whatPeopleSay": "General reputation"
 }
 
-Score Guidelines: 76-100=Excellent, 51-75=Good, 26-50=Concerning, 0-25=Avoid`,
+REMEMBER: Chips like SunChips, Lay's, Doritos should get Safety 25-35, NOT 70+!`,
                         },
                         {
                             type: 'image_url',

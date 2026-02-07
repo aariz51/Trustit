@@ -25,6 +25,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
   final StorageService _storageService = StorageService();
   Map<String, dynamic> _analysisData = {};
   bool _isLoading = true;
+  bool _hasValidImage = false; // Cache file existence check to avoid blocking I/O in build
 
   final Map<String, bool> _expandedSections = {
     'healthImpact': false,
@@ -44,8 +45,10 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
   void _loadData() {
     // If analysis data was passed via navigation, use it
     if (widget.analysisData != null && widget.analysisData!.isNotEmpty) {
+      final imagePath = widget.analysisData!['imagePath'] as String?;
       setState(() {
         _analysisData = widget.analysisData!;
+        _hasValidImage = imagePath != null && File(imagePath).existsSync();
         _isLoading = false;
       });
       return;
@@ -148,8 +151,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: _analysisData['imagePath'] != null && 
-                         File(_analysisData['imagePath'] as String).existsSync()
+                  child: _hasValidImage
                       ? Image.file(
                           File(_analysisData['imagePath'] as String),
                           fit: BoxFit.contain,
@@ -256,9 +258,9 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
 
             // Ingredients Section
             _IngredientsSection(
-              ingredients: _analysisData['ingredients'] != null 
-                  ? List<Map<String, dynamic>>.from(_analysisData['ingredients'] as List)
-                  : [],
+              ingredients: (_analysisData['ingredients'] as List?)
+                  ?.whereType<Map<String, dynamic>>()
+                  .toList() ?? [],
               totalIngredients: (_analysisData['totalIngredients'] as num?)?.toInt() ?? 0,
             ),
             const SizedBox(height: 16),
@@ -359,7 +361,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
   }
 }
 
-/// Ingredients Section Widget - Matches design with yellow/green background
+/// Ingredients Section Widget - Matches RevealIt design with green outline border
 class _IngredientsSection extends StatelessWidget {
   final List<Map<String, dynamic>> ingredients;
   final int totalIngredients;
@@ -375,92 +377,138 @@ class _IngredientsSection extends StatelessWidget {
         return const Color(0xFFEF4444); // Red
       case 'moderate':
       case 'medium':
-        return const Color(0xFFF59E0B); // Orange
+        return const Color(0xFFF59E0B); // Orange/Yellow
       case 'low':
       default:
         return const Color(0xFF22C55E); // Green
     }
   }
 
+  String _formatRiskLevel(String riskLevel) {
+    final risk = riskLevel.toLowerCase();
+    switch (risk) {
+      case 'high':
+        return 'High Risk';
+      case 'moderate':
+      case 'medium':
+        return 'Medium Risk';
+      case 'low':
+      default:
+        return 'Low Risk';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final remainingCount = totalIngredients - ingredients.length;
+    final remainingCount = totalIngredients > 0 
+        ? totalIngredients - ingredients.length 
+        : ingredients.length > 5 ? ingredients.length - 5 : 0;
+    final displayIngredients = ingredients.take(5).toList();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF9C3),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF22C55E), // Green outline
+          width: 2,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Ingredients',
-                style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  // Navigate to full ingredients list
-                },
-                child: const Text(
-                  'See All',
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Ingredients',
                   style: TextStyle(
                     fontFamily: 'Outfit',
-                    fontSize: 14,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF22C55E),
+                    color: Color(0xFF1A1A1A),
                   ),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Navigate to full ingredients list
+                  },
+                  child: const Text(
+                    'See All',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF22C55E),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          ...ingredients.map((ingredient) {
+          
+          // Ingredients list with dividers
+          ...displayIngredients.asMap().entries.map((entry) {
+            final index = entry.key;
+            final ingredient = entry.value;
             final name = ingredient['name'] as String? ?? 'Unknown';
             final riskLevel = ingredient['riskLevel'] as String? ?? 'Low';
             final riskColor = _getRiskColor(riskLevel);
-            return _IngredientRow(
-              name: name,
-              risk: riskLevel,
-              riskColor: riskColor,
+            final riskText = _formatRiskLevel(riskLevel);
+            final isLast = index == displayIngredients.length - 1 && remainingCount == 0;
+            
+            return Column(
+              children: [
+                if (index == 0) 
+                  const Divider(height: 1, thickness: 1, color: Color(0xFFE5E7EB)),
+                _IngredientRow(
+                  name: name,
+                  risk: riskText,
+                  riskColor: riskColor,
+                ),
+                if (!isLast)
+                  const Divider(height: 1, thickness: 1, indent: 16, endIndent: 16, color: Color(0xFFE5E7EB)),
+              ],
             );
           }),
+          
+          // "+ X more Ingredients" button
           if (remainingCount > 0) ...[
             const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF22C55E),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // TODO: Navigate to full ingredients list
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF22C55E),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
-                ),
-                child: Text(
-                  '+ $remainingCount more Ingredients',
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  child: Text(
+                    '+ $remainingCount more Ingredients',
+                    style: const TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ],
+          ] else
+            const SizedBox(height: 8),
         ],
       ),
     );
@@ -482,7 +530,7 @@ class _IngredientRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
         children: [
           Expanded(
@@ -498,7 +546,7 @@ class _IngredientRow extends StatelessWidget {
                     color: Color(0xFF1A1A1A),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     Container(
@@ -515,6 +563,7 @@ class _IngredientRow extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Outfit',
                         fontSize: 12,
+                        fontWeight: FontWeight.w500,
                         color: riskColor,
                       ),
                     ),
@@ -523,10 +572,33 @@ class _IngredientRow extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.info_outline,
-            size: 20,
-            color: Color(0xFF9CA3AF),
+          GestureDetector(
+            onTap: () {
+              // TODO: Show ingredient details modal
+            },
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFF22C55E),
+                  width: 1.5,
+                ),
+              ),
+              child: const Center(
+                child: Text(
+                  'i',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.italic,
+                    color: Color(0xFF22C55E),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

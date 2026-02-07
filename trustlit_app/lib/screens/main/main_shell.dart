@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/app_colors.dart';
+import '../../widgets/analysis_notification_overlay.dart';
 
 /// Main Shell with Bottom Navigation Bar
 /// Wraps all main screens (Home, History, Chat, Profile)
@@ -12,7 +13,13 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: Stack(
+        children: [
+          child,
+          // Analysis notification overlay at top
+          const AnalysisNotificationOverlay(),
+        ],
+      ),
       bottomNavigationBar: const _BottomNavBar(),
     );
   }
@@ -22,19 +29,31 @@ class _BottomNavBar extends StatelessWidget {
   const _BottomNavBar();
 
   int _getCurrentIndex(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/history')) return 0;
-    return 0; // Default to history
+    final location = GoRouterState.of(context).uri.toString();
+    if (location.startsWith('/home')) return 0;
+    if (location.startsWith('/history')) return 1;
+    if (location.startsWith('/ai-assistant')) return 3;
+    if (location.startsWith('/guides')) return 4;
+    return 1; // Default to history
   }
 
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/history');
+        context.go('/home');
         break;
       case 1:
+        context.go('/history');
+        break;
+      case 2:
         // Camera button - navigate to camera screen
         context.push('/camera');
+        break;
+      case 3:
+        context.go('/ai-assistant');
+        break;
+      case 4:
+        context.go('/guides');
         break;
     }
   }
@@ -56,17 +75,25 @@ class _BottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // History button (left)
+              // Home
+              _NavItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
+                label: 'Home',
+                isActive: currentIndex == 0,
+                onTap: () => _onItemTapped(context, 0),
+              ),
+              // History
               _NavItem(
                 icon: Icons.history_outlined,
                 activeIcon: Icons.history,
                 label: 'History',
-                isActive: currentIndex == 0,
-                onTap: () => _onItemTapped(context, 0),
+                isActive: currentIndex == 1,
+                onTap: () => _onItemTapped(context, 1),
               ),
               // Center Camera Button (larger, FAB style)
               Semantics(
@@ -74,10 +101,10 @@ class _BottomNavBar extends StatelessWidget {
                 button: true,
                 onTapHint: 'Opens camera for product scanning',
                 child: GestureDetector(
-                  onTap: () => _onItemTapped(context, 1),
+                  onTap: () => _onItemTapped(context, 2),
                   child: Container(
-                    width: 64,
-                    height: 64,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       color: AppColors.primaryGreen,
                       shape: BoxShape.circle,
@@ -92,13 +119,27 @@ class _BottomNavBar extends StatelessWidget {
                     child: const Icon(
                       Icons.camera_alt,
                       color: AppColors.white,
-                      size: 32,
+                      size: 28,
                     ),
                   ),
                 ),
               ),
-              // Placeholder for symmetry (invisible)
-              const SizedBox(width: 48),
+              // AI Assistant
+              _NavItem(
+                icon: Icons.chat_bubble_outline,
+                activeIcon: Icons.chat_bubble,
+                label: 'AI',
+                isActive: currentIndex == 3,
+                onTap: () => _onItemTapped(context, 3),
+              ),
+              // Guides
+              _NavItem(
+                icon: Icons.article_outlined,
+                activeIcon: Icons.article,
+                label: 'Guides',
+                isActive: currentIndex == 4,
+                onTap: () => _onItemTapped(context, 4),
+              ),
             ],
           ),
         ),

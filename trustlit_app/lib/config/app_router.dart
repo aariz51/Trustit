@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../screens/splash/splash_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/onboarding/try_free_screen.dart';
+import '../screens/onboarding/reminder_screen.dart';
 import '../screens/paywall/paywall_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/camera/camera_screen.dart';
@@ -13,6 +15,8 @@ import '../screens/history/history_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/main/main_shell.dart';
+import '../screens/ai_assistant/ai_assistant_screen.dart';
+import '../screens/guides/guides_screen.dart';
 
 /// TrustLit App Router Configuration
 /// Defines all routes and navigation logic
@@ -43,6 +47,20 @@ class AppRouter {
         builder: (context, state) => const OnboardingScreen(),
       ),
 
+      // Try Free Screen (between onboarding and paywall)
+      GoRoute(
+        path: '/try-free',
+        name: 'try-free',
+        builder: (context, state) => const TryFreeScreen(),
+      ),
+
+      // Reminder Screen (before paywall)
+      GoRoute(
+        path: '/reminder',
+        name: 'reminder',
+        builder: (context, state) => const ReminderScreen(),
+      ),
+
       // Paywall Screen
       GoRoute(
         path: '/paywall',
@@ -68,6 +86,20 @@ class AppRouter {
             path: '/history',
             name: 'history',
             builder: (context, state) => const HistoryScreen(),
+          ),
+
+          // AI Assistant Screen (in shell for bottom nav)
+          GoRoute(
+            path: '/ai-assistant',
+            name: 'ai-assistant',
+            builder: (context, state) => const AIAssistantScreen(),
+          ),
+
+          // Guides Screen
+          GoRoute(
+            path: '/guides',
+            name: 'guides',
+            builder: (context, state) => const GuidesScreen(),
           ),
 
           // Chat Screen

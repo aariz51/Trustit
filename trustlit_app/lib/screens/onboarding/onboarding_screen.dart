@@ -42,9 +42,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   RichText(
                     text: const TextSpan(
                       style: TextStyle(
-                        fontFamily: 'Outfit',
+                        fontFamily: 'Roboto',
                         fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                       ),
                       children: [
                         TextSpan(
@@ -143,20 +143,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(48, 32, 48, 40),
               child: GestureDetector(
-                onTap: () => context.go('/paywall'),
+                onTap: () => context.go('/try-free'),
                 child: Container(
                   width: double.infinity,
-                  height: 56,
+                  height: 52,
                   decoration: BoxDecoration(
                     color: const Color(0xFF22C55E),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF22C55E).withValues(alpha: 0.3),
-                        blurRadius: 16,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(26),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -164,14 +157,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Text(
                         'Get Started',
                         style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 18,
+                          fontFamily: 'Roboto',
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
                       SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 18),
                     ],
                   ),
                 ),
