@@ -249,30 +249,33 @@ class _PaywallScreenState extends State<PaywallScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Pricing cards row
-            Row(
-              children: [
-                // Lifetime card
-                Expanded(
-                  child: _buildPricingCard(
-                    title: 'Lifetime',
-                    price: lifetimePrice,
-                    isSelected: !isYearlySelected,
-                    onTap: () => setState(() => isYearlySelected = false),
+            // Pricing cards row - added top margin for badge overflow
+            Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: Row(
+                children: [
+                  // Lifetime card
+                  Expanded(
+                    child: _buildPricingCard(
+                      title: 'Lifetime',
+                      price: lifetimePrice,
+                      isSelected: !isYearlySelected,
+                      onTap: () => setState(() => isYearlySelected = false),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                // Yearly card with badge
-                Expanded(
-                  child: _buildPricingCard(
-                    title: 'YEARLY',
-                    price: yearlyPrice,
-                    isSelected: isYearlySelected,
-                    showBadge: true,
-                    onTap: () => setState(() => isYearlySelected = true),
+                  const SizedBox(width: 10),
+                  // Yearly card with badge
+                  Expanded(
+                    child: _buildPricingCard(
+                      title: 'YEARLY',
+                      price: yearlyPrice,
+                      isSelected: isYearlySelected,
+                      showBadge: true,
+                      onTap: () => setState(() => isYearlySelected = true),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 14),
             // No Payment Due Now

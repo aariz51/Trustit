@@ -13,8 +13,8 @@ import 'storage_service.dart';
 /// - Lifetime purchase ($59.99 one-time)
 class SubscriptionService {
   // Product IDs - Must match App Store Connect
-  static const String yearlyProductId = 'com.trustlit.yearly';
-  static const String lifetimeProductId = 'com.trustlit.lifetime';
+  static const String yearlyProductId = 'com.trustlt.yearly';
+  static const String lifetimeProductId = 'com.trustlt.lifetime';
 
   static final Set<String> _productIds = {yearlyProductId, lifetimeProductId};
 
