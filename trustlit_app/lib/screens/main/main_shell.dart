@@ -33,7 +33,9 @@ class _BottomNavBar extends StatelessWidget {
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/history')) return 1;
     if (location.startsWith('/ai-assistant')) return 3;
+    if (location.startsWith('/chat')) return 3; // Chat maps to AI tab
     if (location.startsWith('/guides')) return 4;
+    if (location.startsWith('/profile')) return 0; // Profile maps to Home tab
     return 1; // Default to history
   }
 

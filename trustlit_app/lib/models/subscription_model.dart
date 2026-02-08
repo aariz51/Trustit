@@ -42,9 +42,10 @@ class SubscriptionModel {
     
     // Active yearly subscription
     if (isYearly && isActive) {
-      if (expiryDate != null && DateTime.now().isBefore(expiryDate!)) {
-        return true;
-      }
+      // If expiryDate is null but subscription is active, treat as valid
+      // (expiry date may not be set immediately after purchase)
+      if (expiryDate == null) return true;
+      if (DateTime.now().isBefore(expiryDate!)) return true;
     }
     
     return false;

@@ -100,8 +100,9 @@ const wchar_t* WindowClassRegistrar::GetWindowClass() {
     window_class.hbrBackground = 0;
     window_class.lpszMenuName = nullptr;
     window_class.lpfnWndProc = Win32Window::WndProc;
-    RegisterClass(&window_class);
-    class_registered_ = true;
+    if (RegisterClass(&window_class)) {
+      class_registered_ = true;
+    }
   }
   return kWindowClassName;
 }
@@ -218,7 +219,7 @@ Win32Window::MessageHandler(HWND hwnd,
       return 0;
   }
 
-  return DefWindowProc(window_handle_, message, wparam, lparam);
+  return DefWindowProc(hwnd, message, wparam, lparam);
 }
 
 void Win32Window::Destroy() {
