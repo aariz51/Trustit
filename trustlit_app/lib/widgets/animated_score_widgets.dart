@@ -114,7 +114,7 @@ class _AnimatedCircularScoreState extends State<AnimatedCircularScore>
                     painter: _CircleProgressPainter(
                       progress: currentScore / 100,
                       color: color,
-                      backgroundColor: color.withValues(alpha: 0.2),
+                      backgroundColor: color.withOpacity(0.2),
                       strokeWidth: widget.strokeWidth,
                     ),
                   ),
@@ -247,6 +247,24 @@ class _AnimatedScoreBarState extends State<AnimatedScoreBar>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(AnimatedScoreBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.score != widget.score) {
+      _animation = Tween<double>(
+        begin: _animation.value,
+        end: widget.score.toDouble(),
+      ).animate(CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ));
+      _controller.forward(from: 0);
+    }
+    if (oldWidget.animationDuration != widget.animationDuration) {
+      _controller.duration = widget.animationDuration;
+    }
   }
 
   Color _getScoreColor(double score) {

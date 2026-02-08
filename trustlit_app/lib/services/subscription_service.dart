@@ -31,6 +31,10 @@ class SubscriptionService {
   bool _isAvailable = false;
   bool _isPurchasing = false;
 
+  // Stream to notify when purchase is completed
+  final StreamController<bool> _purchaseCompleteController = StreamController<bool>.broadcast();
+  Stream<bool> get purchaseCompleteStream => _purchaseCompleteController.stream;
+
   /// Product details getter
   List<ProductDetails> get products => _products;
   bool get isAvailable => _isAvailable;
@@ -301,6 +305,9 @@ class SubscriptionService {
 
     await _storageService.saveSubscription(subscription);
     debugPrint('Subscription activated: $productId');
+    
+    // Notify listeners that purchase is complete
+    _purchaseCompleteController.add(true);
   }
 
   /// Restore previous purchases

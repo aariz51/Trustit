@@ -61,44 +61,8 @@ class HomeScreen extends StatelessWidget {
                       onButtonTap: () => context.go('/ai-assistant'),
                     ),
                     
-                    const SizedBox(height: 24),
-                    
-                    // Guides Section Header
-                    const Text(
-                      'Guides',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 12),
-                    
-                    // Guides horizontal scroll
-                    SizedBox(
-                      height: 160,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          _GuidePreviewCard(
-                            imagePath: 'assets/images/paywall_1.png',
-                            onTap: () => context.go('/guides'),
-                          ),
-                          const SizedBox(width: 12),
-                          _GuidePreviewCard(
-                            imagePath: 'assets/images/paywall_2.png',
-                            onTap: () => context.go('/guides'),
-                          ),
-                          const SizedBox(width: 12),
-                          _GuidePreviewCard(
-                            imagePath: 'assets/images/paywall_3.png',
-                            onTap: () => context.go('/guides'),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Guides section - hidden until client provides images
+                    // TODO: Add Guides section when images are provided by client
                     
                     const SizedBox(height: 24),
                   ],
@@ -135,29 +99,6 @@ class HomeScreen extends StatelessWidget {
                   style: TextStyle(color: Color(0xFF22C55E)),
                 ),
               ],
-            ),
-          ),
-          
-          // Profile Avatar
-          GestureDetector(
-            onTap: () => context.push('/paywall'),
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8D5F0),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(
-                child: Text(
-                  'AO',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF7C3AED),
-                  ),
-                ),
-              ),
             ),
           ),
         ],

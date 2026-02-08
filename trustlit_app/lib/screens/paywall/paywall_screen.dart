@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/subscription_service.dart';
@@ -18,11 +19,28 @@ class _PaywallScreenState extends State<PaywallScreen> {
   bool isYearlySelected = true;
   bool _isLoading = false;
   final SubscriptionService _subscriptionService = SubscriptionService();
+  StreamSubscription<bool>? _purchaseCompleteSubscription;
 
   @override
   void initState() {
     super.initState();
     _initializeSubscriptionService();
+    
+    // Listen for purchase completion and redirect to home
+    _purchaseCompleteSubscription = _subscriptionService.purchaseCompleteStream.listen((success) {
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Purchase successful!')),
+        );
+        context.go('/home');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _purchaseCompleteSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _initializeSubscriptionService() async {

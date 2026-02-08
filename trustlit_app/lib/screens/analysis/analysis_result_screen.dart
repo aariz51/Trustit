@@ -56,24 +56,29 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
 
     // Otherwise, try to load from storage using ID
     if (widget.analysisId != null) {
-      final history = _storageService.getScanHistory();
-      final scan = history.where((s) => s.id == widget.analysisId).firstOrNull;
-      
-      if (scan != null) {
-        setState(() {
-          _analysisData = {
-            'productName': scan.productName,
-            'category': scan.category,
-            'overallScore': scan.overallScore,
-            'safety': scan.overallScore,
-            'efficacy': ((scan.overallScore * 1.1).clamp(0, 100)).toInt(),
-            'transparency': ((scan.overallScore * 1.3).clamp(0, 100)).toInt(),
-            'summary': 'Analysis details for ${scan.productName}',
-            'ingredients': [],
-          };
-          _isLoading = false;
-        });
-        return;
+      try {
+        final history = _storageService.getScanHistory();
+        final scan = history.where((s) => s.id == widget.analysisId).firstOrNull;
+        
+        if (scan != null) {
+          setState(() {
+            _analysisData = {
+              'productName': scan.productName,
+              'category': scan.category,
+              'overallScore': scan.overallScore,
+              'safety': scan.overallScore,
+              'efficacy': ((scan.overallScore * 1.1).clamp(0, 100)).toInt(),
+              'transparency': ((scan.overallScore * 1.3).clamp(0, 100)).toInt(),
+              'summary': 'Analysis details for ${scan.productName}',
+              'ingredients': [],
+            };
+            _isLoading = false;
+          });
+          return;
+        }
+      } catch (e, st) {
+        debugPrint('Error loading scan history: $e\n$st');
+        // Fall through to default data
       }
     }
 
@@ -401,7 +406,7 @@ class _IngredientsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final remainingCount = totalIngredients > 0 
-        ? totalIngredients - ingredients.length 
+        ? (totalIngredients - ingredients.length).clamp(0, totalIngredients) 
         : ingredients.length > 5 ? ingredients.length - 5 : 0;
     final displayIngredients = ingredients.take(5).toList();
 
