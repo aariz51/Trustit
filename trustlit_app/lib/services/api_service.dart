@@ -25,7 +25,7 @@ class ApiService {
   // For physical device on local network, use your computer's IP
   static const String _baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://192.168.29.229:3000/api',
+    defaultValue: 'https://trustlt.onrender.com/api',
   );
 
   static final ApiService _instance = ApiService._internal();

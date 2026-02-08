@@ -248,7 +248,7 @@ class SubscriptionService {
       // Call backend to verify receipt
       // Note: Update this URL to your production backend
       final response = await _dio.post(
-        'https://your-api-domain.com/api/verify-receipt',
+        'https://trustlt.onrender.com/api/verify-receipt',
         data: {
           'receiptData': receiptData,
           'productId': purchaseDetails.productID,

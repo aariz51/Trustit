@@ -156,7 +156,7 @@ function validatePurchase(latestReceiptInfo, productId) {
     const now = Date.now();
 
     // For non-consumable (lifetime), just check if it exists
-    if (productId === 'com.trustlit.lifetime') {
+    if (productId === 'com.trustlt.lifetime') {
         return {
             valid: true,
             status: 'active',
