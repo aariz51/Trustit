@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Home Screen - Exact match to design 13.png
-/// Shows "RevealIt" logo, 3 feature cards with illustrations, Guides section
+/// Home Screen - Main dashboard with feature cards
+/// Based on exact Figma design with Food Scanner, Track History, AI Expert
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -12,131 +12,176 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header with TrustIt logo and profile
+              _buildHeader(context),
+              
               const SizedBox(height: 16),
-
-              // TrustIt Header Logo
-              Center(
-                child: SizedBox(
-                  height: 40,
-                  child: Image.asset(
-                    'assets/images/app_icon.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
+              
               // Feature Cards
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Product Scanner Card
+                    // Food Scanner Card
                     _FeatureCard(
-                      illustration: _ProductScannerIllustration(),
-                      title: 'Product Scanner',
-                      subtitle: 'Detect Hidden Chemicals',
-                      buttonText: 'Start',
-                      buttonIcon: Icons.camera_alt_outlined,
-                      buttonColor: const Color(0xFF22C55E),
-                      onTap: () => context.push('/camera'),
+                      imagePath: 'assets/images/food scanner.png',
+                      title: 'Food Scanner',
+                      subtitle: 'Detect Hidden Additives',
+                      buttonLabel: 'Start',
+                      buttonIcon: Icons.camera_alt,
+                      onButtonTap: () => context.push('/camera'),
                     ),
+                    
                     const SizedBox(height: 12),
-
+                    
                     // Track History Card
                     _FeatureCard(
-                      illustration: _TrackHistoryIllustration(),
+                      imagePath: 'assets/images/track history.png',
                       title: 'Track History',
                       subtitle: 'Track your choices',
-                      buttonText: 'Track',
+                      buttonLabel: 'Track',
                       buttonIcon: Icons.search,
-                      buttonColor: const Color(0xFF22C55E),
-                      onTap: () => context.go('/history'),
+                      onButtonTap: () => context.go('/history'),
                     ),
+                    
                     const SizedBox(height: 12),
-
+                    
                     // AI Expert Card
                     _FeatureCard(
-                      illustration: _AIExpertIllustration(),
+                      imagePath: 'assets/images/ai expert.png',
                       title: 'AI Expert',
                       subtitle: 'Ask it anything',
-                      buttonText: 'Chat',
-                      buttonIcon: Icons.chat_bubble_outline,
-                      buttonColor: const Color(0xFF22C55E),
-                      onTap: () => context.go('/chat'),
+                      buttonLabel: 'Chat',
+                      buttonIcon: Icons.chat_bubble,
+                      onButtonTap: () => context.go('/ai-assistant'),
                     ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Guides Section Header
+                    const Text(
+                      'Guides',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    
+                    // Guides horizontal scroll
+                    SizedBox(
+                      height: 160,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        children: [
+                          _GuidePreviewCard(
+                            imagePath: 'assets/images/paywall_1.png',
+                            onTap: () => context.go('/guides'),
+                          ),
+                          const SizedBox(width: 12),
+                          _GuidePreviewCard(
+                            imagePath: 'assets/images/paywall_2.png',
+                            onTap: () => context.go('/guides'),
+                          ),
+                          const SizedBox(width: 12),
+                          _GuidePreviewCard(
+                            imagePath: 'assets/images/paywall_3.png',
+                            onTap: () => context.go('/guides'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Guides Section
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: const Text(
-                  'Guides',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Guides Horizontal Scroll
-              SizedBox(
-                height: 160,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: [
-                    _GuideCard(
-                      title: 'Understanding Labels',
-                      bgColor: const Color(0xFFFEF3C7),
-                    ),
-                    _GuideCard(
-                      title: 'Healthy Eating Tips',
-                      bgColor: const Color(0xFFDCFCE7),
-                    ),
-                    _GuideCard(
-                      title: 'Cosmetic Safety',
-                      bgColor: const Color(0xFFE0E7FF),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 100), // Bottom nav space
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // TrustIt Logo
+          RichText(
+            text: const TextSpan(
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+              ),
+              children: [
+                TextSpan(
+                  text: 'Trust',
+                  style: TextStyle(color: Color(0xFF1A1A1A)),
+                ),
+                TextSpan(
+                  text: 'It',
+                  style: TextStyle(color: Color(0xFF22C55E)),
+                ),
+              ],
+            ),
+          ),
+          
+          // Profile Avatar
+          GestureDetector(
+            onTap: () => context.push('/paywall'),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8D5F0),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Text(
+                  'AO',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF7C3AED),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-/// Feature Card Widget matching the design
+/// Feature Card Widget - for Food Scanner, Track History, AI Expert
 class _FeatureCard extends StatelessWidget {
-  final Widget illustration;
+  final String imagePath;
   final String title;
   final String subtitle;
-  final String buttonText;
+  final String buttonLabel;
   final IconData buttonIcon;
-  final Color buttonColor;
-  final VoidCallback onTap;
+  final VoidCallback onButtonTap;
 
   const _FeatureCard({
-    required this.illustration,
+    required this.imagePath,
     required this.title,
     required this.subtitle,
-    required this.buttonText,
+    required this.buttonLabel,
     required this.buttonIcon,
-    required this.buttonColor,
-    required this.onTap,
+    required this.onButtonTap,
   });
 
   @override
@@ -144,19 +189,42 @@ class _FeatureCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: const Color(0xFFFAFAFA),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color(0xFFE8E8E8),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
-          // Illustration
-          SizedBox(
-            width: 80,
-            height: 80,
-            child: illustration,
+          // Feature Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: 100,
+              height: 100,
+              color: Colors.white,
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: const Color(0xFFF0F9F0),
+                    child: const Icon(
+                      Icons.image,
+                      size: 40,
+                      color: Color(0xFF22C55E),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
+          
           const SizedBox(width: 16),
-          // Content
+          
+          // Text and Button
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,42 +232,48 @@ class _FeatureCard extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontFamily: 'Outfit',
                     fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     color: Color(0xFF1A1A1A),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Color(0xFF6B7280),
+                    color: Colors.grey.shade600,
                   ),
                 ),
                 const SizedBox(height: 12),
+                
+                // Action Button
                 GestureDetector(
-                  onTap: onTap,
+                  onTap: onButtonTap,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
-                      color: buttonColor,
+                      color: const Color(0xFF22C55E),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(buttonIcon, color: Colors.white, size: 16),
+                        Icon(
+                          buttonIcon,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                         const SizedBox(width: 6),
                         Text(
-                          buttonText,
+                          buttonLabel,
                           style: const TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
                             color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -215,326 +289,44 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-/// Guide Card Widget
-class _GuideCard extends StatelessWidget {
-  final String title;
-  final Color bgColor;
+/// Guide Preview Card - horizontal scrolling guides section
+class _GuidePreviewCard extends StatelessWidget {
+  final String imagePath;
+  final VoidCallback onTap;
 
-  const _GuideCard({
-    required this.title,
-    required this.bgColor,
+  const _GuidePreviewCard({
+    required this.imagePath,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: bgColor,
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-      ),
-      child: Stack(
-        children: [
-          // Background pattern
-          Positioned(
-            right: 10,
-            bottom: 10,
-            child: Icon(
-              Icons.restaurant_menu,
-              size: 60,
-              color: Colors.black.withValues(alpha: 0.05),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
+        child: Container(
+          width: 200,
+          height: 160,
+          color: const Color(0xFFF5F5F5),
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: const Color(0xFFF0F9F0),
+                child: const Center(
+                  child: Icon(
+                    Icons.article_outlined,
+                    size: 40,
+                    color: Color(0xFF22C55E),
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Product Scanner Illustration - Woman holding skincare products
-class _ProductScannerIllustration extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFEE2E2).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: CustomPaint(
-        painter: _ScannerIllustrationPainter(),
-      ),
-    );
-  }
-}
-
-class _ScannerIllustrationPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Woman silhouette - simple illustration
-    final skinTone = Paint()..color = const Color(0xFFFCD5B4);
-    final hairColor = Paint()..color = const Color(0xFF4A3728);
-    final shirtColor = Paint()..color = const Color(0xFF86EFAC);
-    final productColor = Paint()..color = const Color(0xFFE5E7EB);
-    
-    // Head
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.5, size.height * 0.25),
-        width: size.width * 0.35,
-        height: size.height * 0.25,
-      ),
-      skinTone,
-    );
-    
-    // Hair
-    final hairPath = Path();
-    hairPath.moveTo(size.width * 0.3, size.height * 0.15);
-    hairPath.quadraticBezierTo(
-      size.width * 0.5, size.height * 0.05,
-      size.width * 0.7, size.height * 0.15,
-    );
-    hairPath.quadraticBezierTo(
-      size.width * 0.75, size.height * 0.35,
-      size.width * 0.65, size.height * 0.45,
-    );
-    hairPath.lineTo(size.width * 0.35, size.height * 0.45);
-    hairPath.quadraticBezierTo(
-      size.width * 0.25, size.height * 0.35,
-      size.width * 0.3, size.height * 0.15,
-    );
-    canvas.drawPath(hairPath, hairColor);
-    
-    // Body/Shirt
-    final bodyPath = Path();
-    bodyPath.moveTo(size.width * 0.35, size.height * 0.4);
-    bodyPath.lineTo(size.width * 0.2, size.height * 0.95);
-    bodyPath.lineTo(size.width * 0.8, size.height * 0.95);
-    bodyPath.lineTo(size.width * 0.65, size.height * 0.4);
-    bodyPath.close();
-    canvas.drawPath(bodyPath, shirtColor);
-    
-    // Product bottles
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.75, size.height * 0.7),
-          width: size.width * 0.15,
-          height: size.height * 0.25,
-        ),
-        const Radius.circular(4),
-      ),
-      productColor,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.25, size.height * 0.75),
-          width: size.width * 0.12,
-          height: size.height * 0.2,
-        ),
-        const Radius.circular(4),
-      ),
-      productColor,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// Track History Illustration - Woman on phone with score display
-class _TrackHistoryIllustration extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFEF3C7).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: CustomPaint(
-        painter: _HistoryIllustrationPainter(),
-      ),
-    );
-  }
-}
-
-class _HistoryIllustrationPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final skinTone = Paint()..color = const Color(0xFFFCD5B4);
-    final hairColor = Paint()..color = const Color(0xFF1A1A1A);
-    final shirtColor = Paint()..color = const Color(0xFFFDE047);
-    final phoneColor = Paint()..color = const Color(0xFF1A1A1A);
-    
-    // Head
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.4, size.height * 0.25),
-        width: size.width * 0.3,
-        height: size.height * 0.22,
-      ),
-      skinTone,
-    );
-    
-    // Hair bun
-    canvas.drawCircle(
-      Offset(size.width * 0.4, size.height * 0.12),
-      size.width * 0.12,
-      hairColor,
-    );
-    
-    // Body
-    final bodyPath = Path();
-    bodyPath.moveTo(size.width * 0.3, size.height * 0.38);
-    bodyPath.lineTo(size.width * 0.15, size.height * 0.95);
-    bodyPath.lineTo(size.width * 0.65, size.height * 0.95);
-    bodyPath.lineTo(size.width * 0.5, size.height * 0.38);
-    bodyPath.close();
-    canvas.drawPath(bodyPath, shirtColor);
-    
-    // Phone
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.75, size.height * 0.5),
-          width: size.width * 0.25,
-          height: size.height * 0.4,
-        ),
-        const Radius.circular(4),
-      ),
-      phoneColor,
-    );
-    
-    // Score circle on phone
-    final scoreCircle = Paint()
-      ..color = const Color(0xFFEF4444)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    canvas.drawCircle(
-      Offset(size.width * 0.75, size.height * 0.5),
-      size.width * 0.08,
-      scoreCircle,
-    );
-    
-    // Score text
-    final textPainter = TextPainter(
-      text: const TextSpan(
-        text: '32',
-        style: TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFFEF4444),
         ),
       ),
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset(size.width * 0.71, size.height * 0.46),
     );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// AI Expert Illustration - Woman with lightbulb/idea
-class _AIExpertIllustration extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFDCFCE7).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: CustomPaint(
-        painter: _AIExpertIllustrationPainter(),
-      ),
-    );
-  }
-}
-
-class _AIExpertIllustrationPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final skinTone = Paint()..color = const Color(0xFFFCD5B4);
-    final hairColor = Paint()..color = const Color(0xFF4A3728);
-    final shirtColor = Paint()..color = const Color(0xFF86EFAC);
-    
-    // Head
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.5, size.height * 0.35),
-        width: size.width * 0.35,
-        height: size.height * 0.25,
-      ),
-      skinTone,
-    );
-    
-    // Hair
-    final hairPath = Path();
-    hairPath.moveTo(size.width * 0.25, size.height * 0.25);
-    hairPath.quadraticBezierTo(
-      size.width * 0.5, size.height * 0.1,
-      size.width * 0.75, size.height * 0.25,
-    );
-    hairPath.lineTo(size.width * 0.7, size.height * 0.5);
-    hairPath.lineTo(size.width * 0.3, size.height * 0.5);
-    hairPath.close();
-    canvas.drawPath(hairPath, hairColor);
-    
-    // Body
-    final bodyPath = Path();
-    bodyPath.moveTo(size.width * 0.35, size.height * 0.5);
-    bodyPath.lineTo(size.width * 0.2, size.height * 0.95);
-    bodyPath.lineTo(size.width * 0.8, size.height * 0.95);
-    bodyPath.lineTo(size.width * 0.65, size.height * 0.5);
-    bodyPath.close();
-    canvas.drawPath(bodyPath, shirtColor);
-    
-    // AI Badge
-    final badgeBg = Paint()..color = const Color(0xFF22C55E);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.25, size.height * 0.7),
-          width: size.width * 0.2,
-          height: size.height * 0.12,
-        ),
-        const Radius.circular(4),
-      ),
-      badgeBg,
-    );
-    
-    // Lightbulb
-    final bulbColor = Paint()..color = const Color(0xFFFBBF24);
-    canvas.drawCircle(
-      Offset(size.width * 0.8, size.height * 0.2),
-      size.width * 0.1,
-      bulbColor,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
