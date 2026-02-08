@@ -83,7 +83,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.go('/home'),
         ),
         title: const Text(
           'AI Assistant',
