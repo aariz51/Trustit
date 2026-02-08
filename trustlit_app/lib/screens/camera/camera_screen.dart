@@ -229,9 +229,9 @@ class _CameraScreenState extends State<CameraScreen> {
             ),
           ),
 
-          // Instruction banner - positioned below the scan frame
+          // Instruction banner - positioned at TOP inside the scan frame (below white line)
           Positioned(
-            bottom: 160,
+            top: 155,
             left: 0,
             right: 0,
             child: Center(
