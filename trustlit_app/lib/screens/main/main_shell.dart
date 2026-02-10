@@ -69,7 +69,7 @@ class _BottomNavBar extends StatelessWidget {
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -83,16 +83,14 @@ class _BottomNavBar extends StatelessWidget {
             children: [
               // Home
               _NavItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home,
+                imagePath: 'assets/images/image copy.png',
                 label: 'Home',
                 isActive: currentIndex == 0,
                 onTap: () => _onItemTapped(context, 0),
               ),
               // History
               _NavItem(
-                icon: Icons.history_outlined,
-                activeIcon: Icons.history,
+                imagePath: 'assets/images/image copy 4.png',
                 label: 'History',
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
@@ -112,32 +110,32 @@ class _BottomNavBar extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryGreen.withValues(alpha: 0.4),
+                          color: AppColors.primaryGreen.withOpacity(0.4),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: AppColors.white,
-                      size: 28,
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Image.asset(
+                        'assets/images/image.png',
+                        color: AppColors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
               // AI Assistant
               _NavItem(
-                icon: Icons.chat_bubble_outline,
-                activeIcon: Icons.chat_bubble,
+                imagePath: 'assets/images/image copy 2.png',
                 label: 'AI',
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
               // Guides
               _NavItem(
-                icon: Icons.article_outlined,
-                activeIcon: Icons.article,
+                imagePath: 'assets/images/image copy 3.png',
                 label: 'Guides',
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
@@ -151,15 +149,13 @@ class _BottomNavBar extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final IconData activeIcon;
+  final String imagePath;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
 
   const _NavItem({
-    required this.icon,
-    required this.activeIcon,
+    required this.imagePath,
     required this.label,
     required this.isActive,
     required this.onTap,
@@ -173,10 +169,11 @@ class _NavItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            isActive ? activeIcon : icon,
+          Image.asset(
+            imagePath,
+            width: 24,
+            height: 24,
             color: isActive ? AppColors.navActive : AppColors.navInactive,
-            size: 24,
           ),
           const SizedBox(height: 4),
           Text(

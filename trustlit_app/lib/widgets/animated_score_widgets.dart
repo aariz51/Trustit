@@ -73,21 +73,21 @@ class _AnimatedCircularScoreState extends State<AnimatedCircularScore>
   }
 
   Color _getScoreColor(double score) {
-    if (score < 40) {
-      return const Color(0xFFEF4444); // Red
-    } else if (score < 70) {
-      return const Color(0xFFF59E0B); // Yellow/Orange
+    if (score < 30) {
+      return const Color(0xFFEF4444); // Red - Bad
+    } else if (score < 50) {
+      return const Color(0xFFF97316); // Orange - Medium
+    } else if (score < 75) {
+      return const Color(0xFFF59E0B); // Yellow - Average
     } else {
-      return const Color(0xFF22C55E); // Green
+      return const Color(0xFF22C55E); // Green - Excellent
     }
   }
 
   String _getScoreLabel(double score) {
-    if (score < 25) return 'Bad';
-    if (score < 40) return 'Poor';
-    if (score < 55) return 'Medium';
-    if (score < 70) return 'Average';
-    if (score < 85) return 'Good';
+    if (score < 30) return 'Bad';
+    if (score < 50) return 'Medium';
+    if (score < 75) return 'Average';
     return 'Excellent';
   }
 
@@ -268,12 +268,14 @@ class _AnimatedScoreBarState extends State<AnimatedScoreBar>
   }
 
   Color _getScoreColor(double score) {
-    if (score < 40) {
-      return const Color(0xFFEF4444); // Red
-    } else if (score < 70) {
-      return const Color(0xFFF59E0B); // Yellow/Orange
+    if (score < 30) {
+      return const Color(0xFFEF4444); // Red - Bad
+    } else if (score < 50) {
+      return const Color(0xFFF97316); // Orange - Medium
+    } else if (score < 75) {
+      return const Color(0xFFF59E0B); // Yellow - Average
     } else {
-      return const Color(0xFF22C55E); // Green
+      return const Color(0xFF22C55E); // Green - Excellent
     }
   }
 

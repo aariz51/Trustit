@@ -222,20 +222,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.close, size: 16, color: Colors.grey.shade500),
-            ),
-          ),
           GestureDetector(
             onTap: _isLoading ? null : _restorePurchases,
             child: Text(
@@ -252,10 +240,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _buildStickyFooter(BuildContext context) {
-    // Get prices from subscription service
-    final yearlyPrice = _subscriptionService.getYearlyPrice();
-    final lifetimePrice = _subscriptionService.getLifetimePrice();
-    
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       decoration: const BoxDecoration(
@@ -276,7 +260,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   Expanded(
                     child: _buildPricingCard(
                       title: 'Lifetime',
-                      price: lifetimePrice,
+                      price: '\$119.00',
                       isSelected: !isYearlySelected,
                       onTap: () => setState(() => isYearlySelected = false),
                     ),
@@ -286,7 +270,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   Expanded(
                     child: _buildPricingCard(
                       title: 'YEARLY',
-                      price: yearlyPrice,
+                      price: '\$3.33 /mo',
                       isSelected: isYearlySelected,
                       showBadge: true,
                       onTap: () => setState(() => isYearlySelected = true),
@@ -326,7 +310,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   foregroundColor: Colors.white,
                   disabledBackgroundColor: Colors.grey.shade300,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Pill shape
+                    borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: 0,
                 ),
@@ -352,7 +336,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             // Disclaimer text
             Text(
               isYearlySelected 
-                  ? '3 days FREE, then $yearlyPrice/year'
+                  ? '3 days FREE, then \$39.99 per year (\$3.33/month)'
                   : 'One-time purchase, unlimited access',
               style: const TextStyle(
                 fontSize: 13,
