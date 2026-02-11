@@ -279,30 +279,38 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             // No Payment Due Now
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check, color: Colors.grey.shade800, size: 20),
-                const SizedBox(width: 6),
+                Text(
+                  '✔',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Text(
                   isYearlySelected 
                       ? 'No Payment Due Now' 
                       : 'One-time Payment',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 17,
+                    color: Colors.grey.shade900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             // Try for $0.00 button - pill shape
             SizedBox(
               width: double.infinity,
-              height: 56,
+              height: 58,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _startFreeTrial,
                 style: ElevatedButton.styleFrom(
@@ -326,7 +334,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     : Text(
                         isYearlySelected ? 'Try for \$0.00' : 'Buy Lifetime Access',
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -338,10 +346,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
               isYearlySelected 
                   ? '3 days FREE, then \$39.99 per year (\$3.33/month)'
                   : 'One-time purchase, unlimited access',
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.black54,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 14,
+                color: Colors.grey.shade700,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -362,7 +372,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         clipBehavior: Clip.none,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -380,7 +390,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       Text(
                         title,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontFamily: 'Roboto',
+                          fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Colors.black,
                         ),
@@ -389,7 +400,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       Text(
                         price,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          fontSize: 17,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
@@ -401,8 +413,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 const SizedBox(width: 8),
                 // Radio circle
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 30,
+                  height: 30,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isSelected ? const Color(0xFF22C55E) : Colors.white,
@@ -412,7 +424,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ),
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check, color: Colors.white, size: 18)
+                      ? const Icon(Icons.check, color: Colors.white, size: 20)
                       : null,
                 ),
               ],
@@ -424,7 +436,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               top: -12,
               right: 8,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                 decoration: BoxDecoration(
                   color: const Color(0xFF22C55E),
                   borderRadius: BorderRadius.circular(6),
@@ -433,9 +445,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   '3-DAY FREE TRIAL',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.3,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),

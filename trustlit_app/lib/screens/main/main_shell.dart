@@ -120,8 +120,6 @@ class _BottomNavBar extends StatelessWidget {
                       padding: const EdgeInsets.all(14),
                       child: Image.asset(
                         'assets/images/image.png',
-                        color: AppColors.white,
-                        colorBlendMode: BlendMode.srcIn,
                       ),
                     ),
                   ),
@@ -170,12 +168,13 @@ class _NavItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            imagePath,
-            width: 28,
-            height: 28,
-            color: isActive ? AppColors.navActive : AppColors.navInactive,
-            colorBlendMode: BlendMode.srcIn,
+          Opacity(
+            opacity: isActive ? 1.0 : 0.5,
+            child: Image.asset(
+              imagePath,
+              width: 28,
+              height: 28,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
@@ -203,3 +202,4 @@ class _NavItem extends StatelessWidget {
     );
   }
 }
+
