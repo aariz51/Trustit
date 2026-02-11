@@ -65,6 +65,7 @@ class GuidesScreen extends StatelessWidget {
                     emoji: guide.emoji,
                     title: guide.title,
                     description: guide.subtitle,
+                    imagePath: guide.imagePath,
                     onTap: () => context.push('/guides/${guide.id}'),
                   );
                 },
@@ -81,12 +82,14 @@ class _GuideCard extends StatelessWidget {
   final String emoji;
   final String title;
   final String description;
+  final String? imagePath;
   final VoidCallback onTap;
 
   const _GuideCard({
     required this.emoji,
     required this.title,
     required this.description,
+    this.imagePath,
     required this.onTap,
   });
 
@@ -115,19 +118,35 @@ class _GuideCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Emoji Icon
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: const Color(0xFF22C55E).withOpacity(0.08),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Center(
-                child: Text(
-                  emoji,
-                  style: const TextStyle(fontSize: 28),
+            // Image or Emoji Icon
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF22C55E).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(14),
                 ),
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Text(
+                              emoji,
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                          emoji,
+                          style: const TextStyle(fontSize: 32),
+                        ),
+                      ),
               ),
             ),
             const SizedBox(width: 14),
@@ -167,7 +186,7 @@ class _GuideCard extends StatelessWidget {
 
             // Arrow
             Padding(
-              padding: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.only(top: 24),
               child: Icon(
                 Icons.chevron_right,
                 color: Colors.grey.shade400,
@@ -180,3 +199,4 @@ class _GuideCard extends StatelessWidget {
     );
   }
 }
+

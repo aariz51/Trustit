@@ -4,6 +4,7 @@ class Guide {
   final String title;
   final String subtitle;
   final String emoji;
+  final String? imagePath;
   final List<GuideSection> sections;
 
   const Guide({
@@ -11,6 +12,7 @@ class Guide {
     required this.title,
     required this.subtitle,
     required this.emoji,
+    this.imagePath,
     required this.sections,
   });
 }
@@ -32,6 +34,7 @@ final List<Guide> allGuides = [
     title: 'Foods to Fuel Your Focus and Power Up Your Productivity',
     subtitle: 'How the right foods can outperform coffee for lasting energy and mental clarity',
     emoji: '🧠',
+    imagePath: null, // Image coming soon
     sections: [
       const GuideSection(
         heading: '',
@@ -69,6 +72,7 @@ final List<Guide> allGuides = [
     title: 'Healthy Snacking 101: Smart Choices Between Meals',
     subtitle: 'How to snack in a way that controls hunger, supports energy, and prevents overeating',
     emoji: '🍎',
+    imagePath: 'assets/images/image copy 6.png',
     sections: [
       const GuideSection(
         heading: '',
@@ -98,6 +102,7 @@ final List<Guide> allGuides = [
     title: '2 Landmark Studies on the Benefits of a Plant-Based Diet',
     subtitle: 'What long-term research reveals about health, longevity, and environmental impact',
     emoji: '🥦',
+    imagePath: 'assets/images/image copy 7.png',
     sections: [
       const GuideSection(
         heading: '',
@@ -127,6 +132,7 @@ final List<Guide> allGuides = [
     title: 'Sleep Hygiene: Simple Practices for Better Rest',
     subtitle: 'Small habits that improve sleep quality, recovery, and daily performance',
     emoji: '😴',
+    imagePath: 'assets/images/image copy 8.png',
     sections: [
       const GuideSection(
         heading: '',
@@ -168,6 +174,7 @@ final List<Guide> allGuides = [
     title: 'The Best Foods for Steady Energy',
     subtitle: 'Nutrient-dense choices that help reduce fatigue and support consistent performance',
     emoji: '⚡',
+    imagePath: 'assets/images/image copy 5.png',
     sections: [
       const GuideSection(
         heading: '',
@@ -193,6 +200,7 @@ final List<Guide> allGuides = [
     title: 'Stay Hydrated the Natural Way',
     subtitle: 'How foods, electrolytes, and simple habits support energy and overall health',
     emoji: '💧',
+    imagePath: 'assets/images/image copy 9.png',
     sections: [
       const GuideSection(
         heading: '',
