@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../models/guide_model.dart';
 
 /// Guides Screen - Health and wellness articles
 /// Displays cards with article thumbnails, titles, and descriptions
@@ -14,56 +16,58 @@ class GuidesScreen extends StatelessWidget {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.all(20),
-              child: Center(
-                child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              child: Column(
+                children: [
+                  Center(
+                    child: RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'Trust',
+                            style: TextStyle(color: Color(0xFF1A1A1A)),
+                          ),
+                          TextSpan(
+                            text: 'It',
+                            style: TextStyle(color: Color(0xFF22C55E)),
+                          ),
+                        ],
+                      ),
                     ),
-                    children: [
-                      TextSpan(
-                        text: 'Trust',
-                        style: TextStyle(color: Color(0xFF1A1A1A)),
-                      ),
-                      TextSpan(
-                        text: 'It',
-                        style: TextStyle(color: Color(0xFF22C55E)),
-                      ),
-                    ],
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Health & Nutrition Guides',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 14,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ],
               ),
             ),
             
             // Guide Articles List
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: const [
-                  _GuideCard(
-                    imageAsset: 'assets/images/guide_morning.png',
-                    title: 'How to Build a Healthy Morning Routine',
-                    description: 'How you start your morning can shape the rest of your day',
-                  ),
-                  _GuideCard(
-                    imageAsset: 'assets/images/guide_sleep.png',
-                    title: 'Sleep Hygiene: Habits That Can Improve Your Rest',
-                    description: 'Good sleep isn\'t just about getting more hours—it\'s about...',
-                  ),
-                  _GuideCard(
-                    imageAsset: 'assets/images/guide_energy.png',
-                    title: 'Foods That May Support Energy Levels Naturally',
-                    description: 'If you often feel sluggish or hit an afternoon crash, your diet migh...',
-                  ),
-                  _GuideCard(
-                    imageAsset: 'assets/images/guide_stress.png',
-                    title: 'The Science of Stress and What You Can Do About It',
-                    description: 'Stress is natural, but when it builds up, it can impact your m...',
-                  ),
-                ],
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                physics: const BouncingScrollPhysics(),
+                itemCount: allGuides.length,
+                itemBuilder: (context, index) {
+                  final guide = allGuides[index];
+                  return _GuideCard(
+                    emoji: guide.emoji,
+                    title: guide.title,
+                    description: guide.subtitle,
+                    onTap: () => context.push('/guides/${guide.id}'),
+                  );
+                },
               ),
             ),
           ],
@@ -74,93 +78,104 @@ class GuidesScreen extends StatelessWidget {
 }
 
 class _GuideCard extends StatelessWidget {
-  final String imageAsset;
+  final String emoji;
   final String title;
   final String description;
+  final VoidCallback onTap;
 
   const _GuideCard({
-    required this.imageAsset,
+    required this.emoji,
     required this.title,
     required this.description,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+          border: Border.all(
+            color: const Color(0xFFF0F0F0),
+            width: 1,
           ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Thumbnail Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: 100,
-              height: 100,
-              color: const Color(0xFFF5F5F5),
-              child: Image.asset(
-                imageAsset,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFF0F9F0),
-                    child: const Icon(
-                      Icons.article_outlined,
-                      size: 40,
-                      color: Color(0xFF22C55E),
-                    ),
-                  );
-                },
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Emoji Icon
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: const Color(0xFF22C55E).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Center(
+                child: Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 28),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          
-          // Text Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
-                    height: 1.3,
+            const SizedBox(width: 14),
+            
+            // Text Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A1A),
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 13,
-                    color: Colors.grey.shade600,
-                    height: 1.4,
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+
+            // Arrow
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Icon(
+                Icons.chevron_right,
+                color: Colors.grey.shade400,
+                size: 22,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

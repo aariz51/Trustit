@@ -17,6 +17,7 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/main/main_shell.dart';
 import '../screens/ai_assistant/ai_assistant_screen.dart';
 import '../screens/guides/guides_screen.dart';
+import '../screens/guides/guide_detail_screen.dart';
 
 /// TrustLit App Router Configuration
 /// Defines all routes and navigation logic
@@ -100,6 +101,16 @@ class AppRouter {
             path: '/guides',
             name: 'guides',
             builder: (context, state) => const GuidesScreen(),
+          ),
+
+          // Guide Detail Screen
+          GoRoute(
+            path: '/guides/:id',
+            name: 'guide-detail',
+            builder: (context, state) {
+              final guideId = state.pathParameters['id'] ?? '';
+              return GuideDetailScreen(guideId: guideId);
+            },
           ),
 
           // Chat Screen
