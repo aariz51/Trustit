@@ -48,8 +48,8 @@ class ReminderScreen extends StatelessWidget {
               child: Center(
                 child: Image.asset(
                   'assets/images/cf55c15a-268b-4dae-b98c-fc293930dd13.png',
-                  width: 200,
-                  height: 200,
+                  width: 260,
+                  height: 260,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     // Fallback to icon if image not found
@@ -58,7 +58,7 @@ class ReminderScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.notifications_outlined,
-                          size: 180,
+                          size: 220,
                           color: const Color(0xFF22C55E).withValues(alpha: 0.15),
                         ),
                         Positioned(

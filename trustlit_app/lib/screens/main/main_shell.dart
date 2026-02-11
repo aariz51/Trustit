@@ -121,6 +121,7 @@ class _BottomNavBar extends StatelessWidget {
                       child: Image.asset(
                         'assets/images/image.png',
                         color: AppColors.white,
+                        colorBlendMode: BlendMode.srcIn,
                       ),
                     ),
                   ),
@@ -171,9 +172,10 @@ class _NavItem extends StatelessWidget {
         children: [
           Image.asset(
             imagePath,
-            width: 24,
-            height: 24,
+            width: 28,
+            height: 28,
             color: isActive ? AppColors.navActive : AppColors.navInactive,
+            colorBlendMode: BlendMode.srcIn,
           ),
           const SizedBox(height: 4),
           Text(

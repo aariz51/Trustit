@@ -22,7 +22,7 @@ class GuideDetailScreen extends StatelessWidget {
         slivers: [
           // App Bar with gradient header
           SliverAppBar(
-            expandedHeight: 220,
+            expandedHeight: 280,
             pinned: true,
             backgroundColor: const Color(0xFF22C55E),
             leading: IconButton(
@@ -51,21 +51,21 @@ class GuideDetailScreen extends StatelessWidget {
                 ),
                 child: SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
+                    padding: const EdgeInsets.fromLTRB(20, 50, 20, 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         // Emoji icon
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(14),
                           ),
                           child: Text(
                             guide.emoji,
-                            style: const TextStyle(fontSize: 32),
+                            style: const TextStyle(fontSize: 28),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -74,12 +74,12 @@ class GuideDetailScreen extends StatelessWidget {
                           guide.title,
                           style: const TextStyle(
                             fontFamily: 'Outfit',
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            height: 1.2,
+                            height: 1.25,
                           ),
-                          maxLines: 3,
+                          maxLines: 4,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
