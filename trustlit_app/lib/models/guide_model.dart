@@ -34,7 +34,7 @@ final List<Guide> allGuides = [
     title: 'Foods to Fuel Your Focus and Power Up Your Productivity',
     subtitle: 'How the right foods can outperform coffee for lasting energy and mental clarity',
     emoji: '🧠',
-    imagePath: null, // Image coming soon
+    imagePath: 'assets/images/image copy 10.png',
     sections: [
       const GuideSection(
         heading: '',
