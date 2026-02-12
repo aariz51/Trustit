@@ -239,11 +239,6 @@ class SubscriptionService {
 
   /// Verify purchase with server-side validation
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
-    // For development/testing, accept all purchases
-    if (kDebugMode) {
-      debugPrint('DEBUG MODE: Skipping receipt validation');
-      return true;
-    }
 
     // Server-side receipt validation for production
     try {

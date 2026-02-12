@@ -85,6 +85,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy.png',
                 label: 'Home',
+                iconSize: 32,
                 isActive: currentIndex == 0,
                 onTap: () => _onItemTapped(context, 0),
               ),
@@ -92,6 +93,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 4.png',
                 label: 'History',
+                iconSize: 32,
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
               ),
@@ -116,6 +118,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 2.png',
                 label: 'AI',
+                iconSize: 42,
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
@@ -123,6 +126,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 3.png',
                 label: 'Guides',
+                iconSize: 42,
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
               ),
@@ -137,12 +141,14 @@ class _BottomNavBar extends StatelessWidget {
 class _NavItem extends StatelessWidget {
   final String imagePath;
   final String label;
+  final double iconSize;
   final bool isActive;
   final VoidCallback onTap;
 
   const _NavItem({
     required this.imagePath,
     required this.label,
+    this.iconSize = 32,
     required this.isActive,
     required this.onTap,
   });
@@ -155,12 +161,19 @@ class _NavItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Opacity(
-            opacity: isActive ? 1.0 : 0.5,
-            child: Image.asset(
-              imagePath,
-              width: 32,
-              height: 32,
+          SizedBox(
+            width: 32,
+            height: 32,
+            child: Center(
+              child: Opacity(
+                opacity: isActive ? 1.0 : 0.5,
+                child: Image.asset(
+                  imagePath,
+                  width: iconSize,
+                  height: iconSize,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 4),
