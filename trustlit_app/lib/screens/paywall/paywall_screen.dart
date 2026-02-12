@@ -29,10 +29,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
     // Listen for purchase completion and redirect to home
     _purchaseCompleteSubscription = _subscriptionService.purchaseCompleteStream.listen((success) {
       if (success && mounted) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Purchase successful!')),
         );
-        context.go('/home');
+        // Small delay to show the snackbar before navigating
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) context.go('/home');
+        });
       }
     });
   }
@@ -134,19 +138,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     const SizedBox(height: 8),
                     // App Logo - much larger
                     SizedBox(
-                      width: 90,
-                      height: 90,
+                      width: 70,
+                      height: 70,
                       child: Image.asset(
                         'assets/images/app_icon.png',
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    // Title - much larger
+                    const SizedBox(height: 10),
+                    // Title
                     const Text(
                       'How free trial works',
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: 26,
                         fontWeight: FontWeight.w800,
                         color: Colors.black,
                         letterSpacing: -0.5,
@@ -241,7 +245,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _buildStickyFooter(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
@@ -279,7 +283,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // No Payment Due Now
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -287,30 +291,30 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 Text(
                   '✔',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Colors.grey.shade800,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Text(
                   isYearlySelected 
                       ? 'No Payment Due Now' 
                       : 'One-time Payment',
                   style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 17,
+                    fontSize: 14,
                     color: Colors.grey.shade900,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // Try for $0.00 button - pill shape
             SizedBox(
               width: double.infinity,
-              height: 58,
+              height: 50,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _startFreeTrial,
                 style: ElevatedButton.styleFrom(
@@ -318,14 +322,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   foregroundColor: Colors.white,
                   disabledBackgroundColor: Colors.grey.shade300,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(26),
                   ),
                   elevation: 0,
                 ),
                 child: _isLoading
                     ? const SizedBox(
-                        width: 24,
-                        height: 24,
+                        width: 22,
+                        height: 22,
                         child: CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2,
@@ -334,13 +338,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     : Text(
                         isYearlySelected ? 'Try for \$0.00' : 'Buy Lifetime Access',
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             // Disclaimer text
             Text(
               isYearlySelected 
@@ -348,7 +352,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   : 'One-time purchase, unlimited access',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.grey.shade700,
               ),
               textAlign: TextAlign.center,
@@ -372,7 +376,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         clipBehavior: Clip.none,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -391,7 +395,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         title,
                         style: const TextStyle(
                           fontFamily: 'Roboto',
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: Colors.black,
                         ),
@@ -401,7 +405,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         price,
                         style: const TextStyle(
                           fontFamily: 'Roboto',
-                          fontSize: 17,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
@@ -413,18 +417,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 const SizedBox(width: 8),
                 // Radio circle
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isSelected ? const Color(0xFF22C55E) : Colors.white,
                     border: Border.all(
                       color: isSelected ? const Color(0xFF22C55E) : const Color(0xFFCCCCCC),
-                      width: 2.5,
+                      width: 2,
                     ),
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check, color: Colors.white, size: 20)
+                      ? const Icon(Icons.check, color: Colors.white, size: 16)
                       : null,
                 ),
               ],
