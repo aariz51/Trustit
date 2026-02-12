@@ -245,7 +245,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _buildStickyFooter(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
@@ -314,7 +314,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             // Try for $0.00 button - pill shape
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 54,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _startFreeTrial,
                 style: ElevatedButton.styleFrom(
