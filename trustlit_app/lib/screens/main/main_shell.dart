@@ -95,32 +95,19 @@ class _BottomNavBar extends StatelessWidget {
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
               ),
-              // Center Camera Button (larger, FAB style)
+              // Center Camera Button
               Semantics(
                 label: 'Open camera to scan product',
                 button: true,
                 onTapHint: 'Opens camera for product scanning',
                 child: GestureDetector(
                   onTap: () => _onItemTapped(context, 2),
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryGreen,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryGreen.withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Image.asset(
-                        'assets/images/image.png',
-                      ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/image.png',
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -172,8 +159,8 @@ class _NavItem extends StatelessWidget {
             opacity: isActive ? 1.0 : 0.5,
             child: Image.asset(
               imagePath,
-              width: 28,
-              height: 28,
+              width: 32,
+              height: 32,
             ),
           ),
           const SizedBox(height: 4),
