@@ -64,7 +64,7 @@ class TryFreeScreen extends StatelessWidget {
             // Phone Mockup Image - fits entirely within available space
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Image.asset(
                   'assets/images/phone_mockup_preview.png',
                   fit: BoxFit.contain,
