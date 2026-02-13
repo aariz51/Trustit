@@ -13,7 +13,7 @@ class TryFreeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
             
             // Title Text
             Padding(
@@ -61,15 +61,16 @@ class TryFreeScreen extends StatelessWidget {
               ),
             ),
             
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             
-            // Phone Mockup Image - larger with less padding, clipped bottom
+            // Phone Mockup Image - fills available space, bottom clipped
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRect(
-                  child: Align(
-                    alignment: Alignment.topCenter,
+              child: ClipRect(
+                child: OverflowBox(
+                  maxHeight: double.infinity,
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Image.asset(
                       'assets/images/phone_mockup_preview.png',
                       fit: BoxFit.fitWidth,
@@ -87,9 +88,9 @@ class TryFreeScreen extends StatelessWidget {
               ),
             ),
             
-            // Bottom Section - no line/divider
+            // Bottom Section
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               child: Column(
                 children: [
                   // No Payment Due Now

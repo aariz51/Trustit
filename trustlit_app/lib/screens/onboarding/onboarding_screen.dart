@@ -35,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // TrustIt Header at top
             Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 8),
+              padding: const EdgeInsets.only(top: 16, bottom: 8),
               child: RichText(
                 text: const TextSpan(
                   style: TextStyle(
@@ -57,7 +57,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Sliding Content Area - larger images with clipped bottom
+            // Sliding Content Area - bigger images, bottom clipped to hide home bar
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -69,10 +69,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemCount: _slideImages.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Align(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: ClipRect(
+                      child: OverflowBox(
+                        maxHeight: double.infinity,
                         alignment: Alignment.topCenter,
                         child: Image.asset(
                           _slideImages[index],
@@ -113,9 +113,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Page indicators - no line above
+            // Page indicators
             Padding(
-              padding: const EdgeInsets.only(top: 12, bottom: 4),
+              padding: const EdgeInsets.only(top: 8, bottom: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -138,7 +138,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Get Started button at bottom
             Padding(
-              padding: const EdgeInsets.fromLTRB(48, 16, 48, 40),
+              padding: const EdgeInsets.fromLTRB(48, 12, 48, 32),
               child: GestureDetector(
                 onTap: () => context.go('/try-free'),
                 child: Container(
