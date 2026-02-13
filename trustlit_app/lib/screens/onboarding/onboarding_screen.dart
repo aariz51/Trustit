@@ -35,12 +35,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // TrustIt Header at top
             Padding(
-              padding: const EdgeInsets.only(top: 0, bottom: 0),
+              padding: const EdgeInsets.only(top: 12, bottom: 4), // Restore spacing
               child: RichText(
                 text: const TextSpan(
                   style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 24, // Keep it compact
+                    fontSize: 26, // Balanced size
                     fontWeight: FontWeight.w700,
                   ),
                   children: [
@@ -109,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Page indicators
             Padding(
-              padding: const EdgeInsets.only(top: 0, bottom: 4),
+              padding: const EdgeInsets.only(top: 4, bottom: 8), // Restore spacing
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -132,13 +132,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Get Started button at bottom
             Padding(
-              padding: const EdgeInsets.fromLTRB(48, 4, 48, 8),
+              padding: const EdgeInsets.fromLTRB(48, 8, 48, 16), // Restore spacing
               child: GestureDetector(
                 onTap: () => context.go('/try-free'),
                 child: Container(
                   width: double.infinity,
-                  height: 48, 
+                  height: 52, // Restore height
                   decoration: BoxDecoration(
+                    color: const Color(0xFF22C55E),
+                    borderRadius: BorderRadius.circular(26),
+                  ),
                     color: const Color(0xFF22C55E),
                     borderRadius: BorderRadius.circular(24),
                   ),

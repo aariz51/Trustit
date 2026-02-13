@@ -13,9 +13,9 @@ class TryFreeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 0),
+            const SizedBox(height: 16), // Restore top spacing
             
-            // Title Text - Smaller font to save space
+            // Title Text
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Column(
@@ -25,9 +25,9 @@ class TryFreeScreen extends StatelessWidget {
                     text: const TextSpan(
                       style: TextStyle(
                         fontFamily: 'Roboto',
-                        fontSize: 24, // Reduced even more to 24
+                        fontSize: 26, // Good readable size
                         fontWeight: FontWeight.w700,
-                        height: 1.0, // Tighter line height
+                        height: 1.2,
                       ),
                       children: [
                         TextSpan(
@@ -45,15 +45,15 @@ class TryFreeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 0), // Minimal spacing
+                  const SizedBox(height: 4),
                   const Text(
                     'absolutely free',
                     style: TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: 24, // Reduced to 24
+                      fontSize: 26,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF22C55E),
-                      height: 1.0,
+                      height: 1.2,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -61,7 +61,7 @@ class TryFreeScreen extends StatelessWidget {
               ),
             ),
             
-            // Phone Mockup Image
+            // Phone Mockup Image - fits entirely within available space
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -80,34 +80,34 @@ class TryFreeScreen extends StatelessWidget {
               ),
             ),
             
-            // Bottom Section
+            // Bottom Section with SafeArea protection
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8), // Tighter bottom padding
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
               child: Column(
                 children: [
                   // No Payment Due Now
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check, color: Colors.grey.shade700, size: 16), // Smaller icon
-                      const SizedBox(width: 4),
+                      Icon(Icons.check, color: Colors.grey.shade700, size: 18),
+                      const SizedBox(width: 8),
                       Text(
                         'No Payment Due Now',
                         style: TextStyle(
                           fontFamily: 'Roboto',
-                          fontSize: 14, // Smaller font
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey.shade700,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 12),
                   
                   // Try for $0.00 Button
                   SizedBox(
                     width: double.infinity,
-                    height: 48, // Reduced height
+                    height: 52,
                     child: ElevatedButton(
                       onPressed: () => context.go('/reminder'),
                       style: ElevatedButton.styleFrom(
