@@ -137,13 +137,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onTap: () => context.go('/try-free'),
                 child: Container(
                   width: double.infinity,
-                  height: 52, // Restore height
+                  height: 52,
                   decoration: BoxDecoration(
                     color: const Color(0xFF22C55E),
                     borderRadius: BorderRadius.circular(26),
-                  ),
-                    color: const Color(0xFF22C55E),
-                    borderRadius: BorderRadius.circular(24),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
