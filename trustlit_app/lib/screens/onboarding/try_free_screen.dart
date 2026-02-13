@@ -63,27 +63,21 @@ class TryFreeScreen extends StatelessWidget {
             
             const SizedBox(height: 8),
             
-            // Phone Mockup Image - fills available space, bottom clipped
+            // Phone Mockup Image - fits entirely within available space
             Expanded(
-              child: ClipRect(
-                child: OverflowBox(
-                  maxHeight: double.infinity,
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Image.asset(
-                      'assets/images/phone_mockup_preview.png',
-                      fit: BoxFit.fitWidth,
-                      alignment: Alignment.topCenter,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/onboarding_slide_2.png',
-                          fit: BoxFit.fitWidth,
-                          alignment: Alignment.topCenter,
-                        );
-                      },
-                    ),
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Image.asset(
+                  'assets/images/phone_mockup_preview.png',
+                  fit: BoxFit.contain,
+                  alignment: Alignment.center,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/images/onboarding_slide_2.png',
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                    );
+                  },
                 ),
               ),
             ),
