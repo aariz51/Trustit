@@ -61,35 +61,35 @@ class TryFreeScreen extends StatelessWidget {
               ),
             ),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             
-            // Phone Mockup Image
+            // Phone Mockup Image - larger with less padding, clipped bottom
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/phone_mockup_preview.png',
-                    fit: BoxFit.contain,
-                    alignment: Alignment.center,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Fallback to onboarding slide if mockup not found
-                      return Image.asset(
-                        'assets/images/onboarding_slide_2.png',
-                        fit: BoxFit.contain,
-                        alignment: Alignment.center,
-                      );
-                    },
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClipRect(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Image.asset(
+                      'assets/images/phone_mockup_preview.png',
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/onboarding_slide_2.png',
+                          fit: BoxFit.fitWidth,
+                          alignment: Alignment.topCenter,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
             
-            const SizedBox(height: 24),
-            
-            // Bottom Section
+            // Bottom Section - no line/divider
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
               child: Column(
                 children: [
                   // No Payment Due Now

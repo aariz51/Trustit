@@ -35,34 +35,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // TrustIt Header at top
             Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 16),
-              child: Column(
-                children: [
-                  // TrustIt Logo/Text Header
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Trust',
-                          style: TextStyle(color: Color(0xFF1A1A1A)),
-                        ),
-                        TextSpan(
-                          text: 'It',
-                          style: TextStyle(color: Color(0xFF22C55E)),
-                        ),
-                      ],
-                    ),
+              padding: const EdgeInsets.only(top: 24, bottom: 8),
+              child: RichText(
+                text: const TextSpan(
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
                   ),
-                ],
+                  children: [
+                    TextSpan(
+                      text: 'Trust',
+                      style: TextStyle(color: Color(0xFF1A1A1A)),
+                    ),
+                    TextSpan(
+                      text: 'It',
+                      style: TextStyle(color: Color(0xFF22C55E)),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            // Sliding Content Area
+            // Sliding Content Area - larger images with clipped bottom
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -73,18 +68,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 itemCount: _slideImages.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Align(
+                        alignment: Alignment.topCenter,
                         child: Image.asset(
                           _slideImages[index],
-                          fit: BoxFit.contain,
-                          alignment: Alignment.center,
+                          fit: BoxFit.fitWidth,
+                          alignment: Alignment.topCenter,
                           errorBuilder: (context, error, stackTrace) {
-                            // Fallback placeholder
                             return Container(
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF3F4F6),
@@ -119,9 +113,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Page indicators
+            // Page indicators - no line above
             Padding(
-              padding: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.only(top: 12, bottom: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -144,7 +138,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Get Started button at bottom
             Padding(
-              padding: const EdgeInsets.fromLTRB(48, 32, 48, 40),
+              padding: const EdgeInsets.fromLTRB(48, 16, 48, 40),
               child: GestureDetector(
                 onTap: () => context.go('/try-free'),
                 child: Container(
