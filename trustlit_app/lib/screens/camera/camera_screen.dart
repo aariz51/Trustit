@@ -4,8 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 
-/// Camera Screen - Matches designs 16-19.png
-/// Full screen camera with instruction banner, capture button, and gallery access
+/// Camera Screen - Redesigned to match reference design
+/// X and Flash buttons outside the frame at top.
+/// Big rounded frame containing: instruction text, camera preview, capture button, gallery button.
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
@@ -141,6 +142,9 @@ class _CameraScreenState extends State<CameraScreen> {
       statusBarIconBrightness: Brightness.light,
     ));
 
+    final topPadding = MediaQuery.of(context).padding.top;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -171,23 +175,9 @@ class _CameraScreenState extends State<CameraScreen> {
               child: CircularProgressIndicator(color: Colors.white),
             ),
 
-          // White scan frame overlay
-          Center(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 140),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.white,
-                  width: 3,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ),
-
-          // Close button - top left corner
+          // Close button - top left corner (OUTSIDE the frame)
           Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
+            top: topPadding + 12,
             left: 16,
             child: GestureDetector(
               onTap: () => context.pop(),
@@ -195,21 +185,21 @@ class _CameraScreenState extends State<CameraScreen> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withOpacity(0.5),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.close,
                   color: Colors.white,
-                  size: 26,
+                  size: 24,
                 ),
               ),
             ),
           ),
 
-          // Flash button - top right corner
+          // Flash button - top right corner (OUTSIDE the frame)
           Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
+            top: topPadding + 12,
             right: 16,
             child: GestureDetector(
               onTap: _toggleFlash,
@@ -217,136 +207,114 @@ class _CameraScreenState extends State<CameraScreen> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withOpacity(0.5),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   _flashEnabled ? Icons.flash_on : Icons.flash_off,
                   color: Colors.white,
-                  size: 26,
+                  size: 24,
                 ),
               ),
             ),
           ),
 
-          // Instruction banner - positioned at TOP inside the scan frame (below white line)
+          // Big scan frame containing everything else
           Positioned(
-            top: 155,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(30),
+            top: topPadding + 70,
+            left: 20,
+            right: 20,
+            bottom: bottomPadding + 16,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.8),
+                  width: 3,
                 ),
-                child: Text(
-                  _currentInstruction,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                children: [
+                  // Instruction banner inside the frame at the top
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.65),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Text(
+                        _currentInstruction,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
 
-          // Bottom controls
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Gallery button
-                    GestureDetector(
-                      onTap: _openGallery,
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.photo_library_outlined,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
+                  // Spacer to push controls to bottom
+                  const Spacer(),
 
-                    // Capture button
-                    GestureDetector(
-                      onTap: _captureImage,
-                      child: Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 4,
-                          ),
-                        ),
-                        child: Container(
-                          margin: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: _isCapturing ? Colors.grey : Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 2,
+                  // Bottom controls inside the frame
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Gallery button
+                        GestureDetector(
+                          onTap: _openGallery,
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.45),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.photo_library_outlined,
+                              color: Colors.white,
+                              size: 24,
                             ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // Progress indicator (front/back)
-                    SizedBox(
-                      width: 48,
-                      height: 48,
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
+                        const SizedBox(width: 32),
+
+                        // Capture button
+                        GestureDetector(
+                          onTap: _captureImage,
+                          child: Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 4,
+                              ),
+                            ),
+                            child: Container(
+                              margin: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: _isCapturingFront
-                                    ? Colors.white
-                                    : Colors.grey,
+                                color: _isCapturing ? Colors.grey.shade400 : Colors.white,
                                 shape: BoxShape.circle,
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: !_isCapturingFront
-                                    ? Colors.white
-                                    : Colors.grey,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+
+                        // Spacer to balance layout 
+                        const SizedBox(width: 80),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

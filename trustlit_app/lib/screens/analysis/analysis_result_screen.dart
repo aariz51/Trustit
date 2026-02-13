@@ -111,8 +111,10 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
             onPressed: () => context.go('/history'),
@@ -436,20 +438,6 @@ class _IngredientsSection extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF1A1A1A),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: Navigate to full ingredients list
-                  },
-                  child: const Text(
-                    'See All',
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF22C55E),
-                    ),
                   ),
                 ),
               ],

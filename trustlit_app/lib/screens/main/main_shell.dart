@@ -77,38 +77,40 @@ class _BottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Home
               _NavItem(
                 imagePath: 'assets/images/image copy.png',
-                label: 'Home',
-                iconSize: 38,
+                iconSize: 30,
                 isActive: currentIndex == 0,
                 onTap: () => _onItemTapped(context, 0),
               ),
               // History
               _NavItem(
                 imagePath: 'assets/images/image copy 4.png',
-                label: 'History',
-                iconSize: 38,
+                iconSize: 30,
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
               ),
-              // Center Camera Button
-              Semantics(
-                label: 'Open camera to scan product',
-                button: true,
-                onTapHint: 'Opens camera for product scanning',
-                child: GestureDetector(
-                  onTap: () => _onItemTapped(context, 2),
+              // Center Camera/Scan Button - significantly bigger
+              GestureDetector(
+                onTap: () => _onItemTapped(context, 2),
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF22C55E),
+                    shape: BoxShape.circle,
+                  ),
                   child: ClipOval(
                     child: Image.asset(
                       'assets/images/image.png',
-                      width: 82,
-                      height: 82,
+                      width: 64,
+                      height: 64,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -117,16 +119,14 @@ class _BottomNavBar extends StatelessWidget {
               // AI Assistant
               _NavItem(
                 imagePath: 'assets/images/image copy 2.png',
-                label: 'AI',
-                iconSize: 56,
+                iconSize: 30,
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
               // Guides
               _NavItem(
                 imagePath: 'assets/images/image copy 3.png',
-                label: 'Guides',
-                iconSize: 56,
+                iconSize: 30,
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
               ),
@@ -140,14 +140,12 @@ class _BottomNavBar extends StatelessWidget {
 
 class _NavItem extends StatelessWidget {
   final String imagePath;
-  final String label;
   final double iconSize;
   final bool isActive;
   final VoidCallback onTap;
 
   const _NavItem({
     required this.imagePath,
-    required this.label,
     this.iconSize = 28,
     required this.isActive,
     required this.onTap,
@@ -158,45 +156,27 @@ class _NavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 56,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Opacity(
-              opacity: isActive ? 1.0 : 0.5,
-              child: Image.asset(
-                imagePath,
-                width: iconSize,
-                height: iconSize,
-                fit: BoxFit.contain,
-              ),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: isActive
+            ? BoxDecoration(
+                color: const Color(0xFF22C55E).withOpacity(0.12),
+                borderRadius: BorderRadius.circular(14),
+              )
+            : null,
+        child: Center(
+          child: Opacity(
+            opacity: isActive ? 1.0 : 0.45,
+            child: Image.asset(
+              imagePath,
+              width: iconSize,
+              height: iconSize,
+              fit: BoxFit.contain,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                color: isActive ? AppColors.navActive : AppColors.navInactive,
-              ),
-            ),
-            if (isActive) ...[
-              const SizedBox(height: 4),
-              Container(
-                width: 4,
-                height: 4,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryGreen,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ] else
-              const SizedBox(height: 8),
-          ],
+          ),
         ),
       ),
     );
   }
 }
-
