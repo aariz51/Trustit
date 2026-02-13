@@ -107,8 +107,8 @@ class _BottomNavBar extends StatelessWidget {
                   child: ClipOval(
                     child: Image.asset(
                       'assets/images/image.png',
-                      width: 64,
-                      height: 64,
+                      width: 72,
+                      height: 72,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -118,7 +118,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 2.png',
                 label: 'AI',
-                iconSize: 38,
+                iconSize: 46,
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
@@ -126,7 +126,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 3.png',
                 label: 'Guides',
-                iconSize: 38,
+                iconSize: 46,
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
               ),

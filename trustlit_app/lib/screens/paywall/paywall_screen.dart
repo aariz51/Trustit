@@ -186,7 +186,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ),
                     // Timeline Section - using image for exact design
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: Image.asset(
                         'assets/images/timeline_section.png',
                         fit: BoxFit.contain,
