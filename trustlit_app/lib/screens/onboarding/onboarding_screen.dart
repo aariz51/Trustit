@@ -35,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // TrustIt Header at top
             Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 8),
+              padding: const EdgeInsets.only(top: 8, bottom: 4),
               child: RichText(
                 text: const TextSpan(
                   style: TextStyle(
@@ -69,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemCount: _slideImages.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
                     child: Image.asset(
                       _slideImages[index],
                       fit: BoxFit.contain,
@@ -109,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Page indicators
             Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 4),
+              padding: const EdgeInsets.only(top: 4, bottom: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -132,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Get Started button at bottom
             Padding(
-              padding: const EdgeInsets.fromLTRB(48, 12, 48, 32),
+              padding: const EdgeInsets.fromLTRB(48, 8, 48, 16),
               child: GestureDetector(
                 onTap: () => context.go('/try-free'),
                 child: Container(

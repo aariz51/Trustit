@@ -13,11 +13,11 @@ class TryFreeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 24),
+            const SizedBox(height: 4),
             
             // Title Text
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Column(
                 children: [
                   RichText(
@@ -61,12 +61,12 @@ class TryFreeScreen extends StatelessWidget {
               ),
             ),
             
-            const SizedBox(height: 8),
+            const SizedBox(height: 0),
             
             // Phone Mockup Image - fits entirely within available space
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: Image.asset(
                   'assets/images/phone_mockup_preview.png',
                   fit: BoxFit.contain,
@@ -84,7 +84,7 @@ class TryFreeScreen extends StatelessWidget {
             
             // Bottom Section
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
               child: Column(
                 children: [
                   // No Payment Due Now
@@ -104,7 +104,7 @@ class TryFreeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   
                   // Try for $0.00 Button
                   SizedBox(
