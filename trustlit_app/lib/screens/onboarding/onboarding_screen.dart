@@ -75,40 +75,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemBuilder: (context, index) {
                   return Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        _slideImages[index],
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Fallback placeholder
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3F4F6),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.image_outlined,
-                                  size: 80,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Slide ${index + 1}',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 18,
-                                    color: Colors.grey[600],
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.asset(
+                          _slideImages[index],
+                          fit: BoxFit.contain,
+                          alignment: Alignment.center,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Fallback placeholder
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF3F4F6),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.image_outlined,
+                                    size: 80,
+                                    color: Colors.grey[400],
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Slide ${index + 1}',
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 18,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   );

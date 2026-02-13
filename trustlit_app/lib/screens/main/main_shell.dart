@@ -85,7 +85,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy.png',
                 label: 'Home',
-                iconSize: 32,
+                iconSize: 28,
                 isActive: currentIndex == 0,
                 onTap: () => _onItemTapped(context, 0),
               ),
@@ -93,7 +93,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 4.png',
                 label: 'History',
-                iconSize: 32,
+                iconSize: 28,
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
               ),
@@ -118,7 +118,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 2.png',
                 label: 'AI',
-                iconSize: 42,
+                iconSize: 38,
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
@@ -126,7 +126,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 3.png',
                 label: 'Guides',
-                iconSize: 42,
+                iconSize: 38,
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
               ),
@@ -148,7 +148,7 @@ class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.imagePath,
     required this.label,
-    this.iconSize = 32,
+    this.iconSize = 28,
     required this.isActive,
     required this.onTap,
   });
@@ -158,46 +158,43 @@ class _NavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 32,
-            height: 32,
-            child: Center(
-              child: Opacity(
-                opacity: isActive ? 1.0 : 0.5,
-                child: Image.asset(
-                  imagePath,
-                  width: iconSize,
-                  height: iconSize,
-                  fit: BoxFit.contain,
+      child: SizedBox(
+        width: 56,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Opacity(
+              opacity: isActive ? 1.0 : 0.5,
+              child: Image.asset(
+                imagePath,
+                width: iconSize,
+                height: iconSize,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                color: isActive ? AppColors.navActive : AppColors.navInactive,
+              ),
+            ),
+            if (isActive) ...[
+              const SizedBox(height: 4),
+              Container(
+                width: 4,
+                height: 4,
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryGreen,
+                  shape: BoxShape.circle,
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              color: isActive ? AppColors.navActive : AppColors.navInactive,
-            ),
-          ),
-          if (isActive) ...[
-            const SizedBox(height: 4),
-            Container(
-              width: 4,
-              height: 4,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryGreen,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ] else
-            const SizedBox(height: 8),
-        ],
+            ] else
+              const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

@@ -67,16 +67,20 @@ class TryFreeScreen extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Image.asset(
-                  'assets/images/phone_mockup_preview.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    // Fallback to onboarding slide if mockup not found
-                    return Image.asset(
-                      'assets/images/onboarding_slide_2.png',
-                      fit: BoxFit.contain,
-                    );
-                  },
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/phone_mockup_preview.png',
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback to onboarding slide if mockup not found
+                      return Image.asset(
+                        'assets/images/onboarding_slide_2.png',
+                        fit: BoxFit.contain,
+                        alignment: Alignment.center,
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
