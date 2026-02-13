@@ -41,8 +41,6 @@ class GuideDetailScreen extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Column(
-        children: [
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
