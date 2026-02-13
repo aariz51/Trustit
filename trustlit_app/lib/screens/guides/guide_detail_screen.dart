@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../models/guide_model.dart';
 
 /// Guide Detail Screen - Displays full guide content with sections
+/// Matches the client's reference design: back arrow + title at top,
+/// guide image below, scrollable content, green "Back" button at bottom.
 class GuideDetailScreen extends StatelessWidget {
   final String guideId;
 
@@ -17,119 +19,119 @@ class GuideDetailScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // App Bar with gradient header
-          SliverAppBar(
-            expandedHeight: 280,
-            pinned: true,
-            backgroundColor: const Color(0xFF22C55E),
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-              ),
-              onPressed: () => context.go('/guides'),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF22C55E),
-                      Color(0xFF16A34A),
-                      Color(0xFF15803D),
-                    ],
+      // Simple top bar with back arrow and title
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF1A1A1A), size: 20),
+          onPressed: () => context.go('/guides'),
+        ),
+        title: Text(
+          guide.title,
+          style: const TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1A1A1A),
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        centerTitle: false,
+      ),
+      body: Column(
+        children: [
+          // Scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Guide image at top (if available)
+                  if (guide.imagePath != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          guide.imagePath!,
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF3F4F6),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  guide.emoji,
+                                  style: const TextStyle(fontSize: 48),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                  // Subtitle / intro
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                    child: Text(
+                      guide.subtitle,
+                      style: const TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                        height: 1.3,
+                      ),
+                    ),
                   ),
-                ),
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 50, 20, 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // Emoji icon
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Text(
-                            guide.emoji,
-                            style: const TextStyle(fontSize: 28),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Title
-                        Text(
-                          guide.title,
-                          style: const TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            height: 1.25,
-                          ),
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+
+                  // Sections
+                  ...guide.sections.map((section) => _SectionWidget(section: section)),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+
+          // Green "Back" button at the bottom
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => context.go('/guides'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF22C55E),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Back',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-
-          // Subtitle
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-              child: Text(
-                guide.subtitle,
-                style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600,
-                  fontStyle: FontStyle.italic,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ),
-
-          // Divider
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Divider(height: 24),
-            ),
-          ),
-
-          // Content Sections
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final section = guide.sections[index];
-                return _SectionWidget(section: section);
-              },
-              childCount: guide.sections.length,
-            ),
-          ),
-
-          // Bottom spacing
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 40),
           ),
         ],
       ),
@@ -145,34 +147,27 @@ class _SectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section heading
+          // Section heading (bold uppercase)
           if (section.heading.isNotEmpty) ...[
             const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF22C55E).withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                section.heading,
-                style: const TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF15803D),
-                  letterSpacing: 0.5,
-                ),
+            Text(
+              section.heading,
+              style: const TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1A1A1A),
+                letterSpacing: 0.3,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
           ],
 
-          // Section content - parse bold markers
+          // Section content
           _RichContentText(content: section.content),
         ],
       ),
@@ -201,15 +196,11 @@ class _RichContentText extends StatelessWidget {
       if (line.trim().startsWith('•')) {
         widgets.add(
           Padding(
-            padding: const EdgeInsets.only(left: 8, bottom: 4),
+            padding: const EdgeInsets.only(left: 4, bottom: 4),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Icon(Icons.circle, size: 6, color: Color(0xFF22C55E)),
-                ),
-                const SizedBox(width: 10),
+                const Text('• ', style: TextStyle(fontSize: 15, color: Color(0xFF1A1A1A))),
                 Expanded(
                   child: Text(
                     line.trim().substring(1).trim(),
@@ -238,7 +229,7 @@ class _RichContentText extends StatelessWidget {
               boldText,
               style: const TextStyle(
                 fontFamily: 'Outfit',
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF1A1A1A),
                 height: 1.4,

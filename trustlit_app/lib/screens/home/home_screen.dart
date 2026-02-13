@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../models/guide_model.dart';
 
 /// Home Screen - Main dashboard with feature cards
 /// Based on exact Figma design with Food Scanner, Track History, AI Expert
@@ -61,13 +62,46 @@ class HomeScreen extends StatelessWidget {
                       onButtonTap: () => context.go('/ai-assistant'),
                     ),
                     
-                    // Guides section - hidden until client provides images
-                    // TODO: Add Guides section when images are provided by client
+                    const SizedBox(height: 20),
                     
-                    const SizedBox(height: 24),
+                    // Guides Section Header
+                    const Text(
+                      'Guides',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
+              
+              // Horizontally scrollable guide images
+              SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: allGuides.length,
+                  itemBuilder: (context, index) {
+                    final guide = allGuides[index];
+                    return Padding(
+                      padding: EdgeInsets.only(right: index < allGuides.length - 1 ? 12 : 0),
+                      child: _GuidePreviewCard(
+                        imagePath: guide.imagePath ?? '',
+                        onTap: () => context.push('/guides/${guide.id}'),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              
+              const SizedBox(height: 24),
             ],
           ),
         ),

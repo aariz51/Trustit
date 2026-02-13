@@ -85,7 +85,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy.png',
                 label: 'Home',
-                iconSize: 28,
+                iconSize: 32,
                 isActive: currentIndex == 0,
                 onTap: () => _onItemTapped(context, 0),
               ),
@@ -93,7 +93,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 4.png',
                 label: 'History',
-                iconSize: 28,
+                iconSize: 32,
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
               ),
@@ -118,7 +118,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 2.png',
                 label: 'AI',
-                iconSize: 38,
+                iconSize: 32,
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
@@ -126,7 +126,7 @@ class _BottomNavBar extends StatelessWidget {
               _NavItem(
                 imagePath: 'assets/images/image copy 3.png',
                 label: 'Guides',
-                iconSize: 38,
+                iconSize: 32,
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
               ),
