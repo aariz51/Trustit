@@ -43,71 +43,62 @@ class GuideDetailScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Scrollable content
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Guide image at top (if available)
-                  if (guide.imagePath != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          guide.imagePath!,
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF3F4F6),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  guide.emoji,
-                                  style: const TextStyle(fontSize: 48),
-                                ),
-                              ),
-                            );
-                          },
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Guide image at top (if available)
+            if (guide.imagePath != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    guide.imagePath!,
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                    ),
-
-                  // Subtitle / intro
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-                    child: Text(
-                      guide.subtitle,
-                      style: const TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A1A),
-                        height: 1.3,
-                      ),
-                    ),
+                        child: Center(
+                          child: Text(
+                            guide.emoji,
+                            style: const TextStyle(fontSize: 48),
+                          ),
+                        ),
+                      );
+                    },
                   ),
+                ),
+              ),
 
-                  // Sections
-                  ...guide.sections.map((section) => _SectionWidget(section: section)),
-
-                  const SizedBox(height: 24),
-                ],
+            // Subtitle / intro
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+              child: Text(
+                guide.subtitle,
+                style: const TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1A1A1A),
+                  height: 1.3,
+                ),
               ),
             ),
-          ),
 
-          // Green "Back" button at the bottom
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+            // Sections
+            ...guide.sections.map((section) => _SectionWidget(section: section)),
+
+            // Green "Back" button at the end of content
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -132,8 +123,8 @@ class GuideDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
