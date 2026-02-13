@@ -25,9 +25,9 @@ class TryFreeScreen extends StatelessWidget {
                     text: const TextSpan(
                       style: TextStyle(
                         fontFamily: 'Roboto',
-                        fontSize: 26, // Reduced from 32
+                        fontSize: 24, // Reduced even more to 24
                         fontWeight: FontWeight.w700,
-                        height: 1.1,
+                        height: 1.0, // Tighter line height
                       ),
                       children: [
                         TextSpan(
@@ -45,15 +45,15 @@ class TryFreeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 0), // Minimal spacing
                   const Text(
                     'absolutely free',
                     style: TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: 26, // Reduced from 32
+                      fontSize: 24, // Reduced to 24
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF22C55E),
-                      height: 1.1,
+                      height: 1.0,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -82,32 +82,32 @@ class TryFreeScreen extends StatelessWidget {
             
             // Bottom Section
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8), // Tighter bottom padding
               child: Column(
                 children: [
                   // No Payment Due Now
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check, color: Colors.grey.shade700, size: 18),
-                      const SizedBox(width: 6),
+                      Icon(Icons.check, color: Colors.grey.shade700, size: 16), // Smaller icon
+                      const SizedBox(width: 4),
                       Text(
                         'No Payment Due Now',
                         style: TextStyle(
                           fontFamily: 'Roboto',
-                          fontSize: 15,
+                          fontSize: 14, // Smaller font
                           fontWeight: FontWeight.w500,
                           color: Colors.grey.shade700,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   
                   // Try for $0.00 Button
                   SizedBox(
                     width: double.infinity,
-                    height: 50, // Reduced from 56
+                    height: 48, // Reduced height
                     child: ElevatedButton(
                       onPressed: () => context.go('/reminder'),
                       style: ElevatedButton.styleFrom(

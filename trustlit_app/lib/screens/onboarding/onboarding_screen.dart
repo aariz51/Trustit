@@ -40,7 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 text: const TextSpan(
                   style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 24, // Reduced from 28
+                    fontSize: 24, // Keep it compact
                     fontWeight: FontWeight.w700,
                   ),
                   children: [
@@ -137,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onTap: () => context.go('/try-free'),
                 child: Container(
                   width: double.infinity,
-                  height: 48, // Reduced from 52
+                  height: 48, 
                   decoration: BoxDecoration(
                     color: const Color(0xFF22C55E),
                     borderRadius: BorderRadius.circular(24),
