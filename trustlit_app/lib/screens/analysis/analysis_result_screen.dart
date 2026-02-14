@@ -407,10 +407,7 @@ class _IngredientsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final remainingCount = totalIngredients > 0 
-        ? (totalIngredients - ingredients.length).clamp(0, totalIngredients) 
-        : ingredients.length > 5 ? ingredients.length - 5 : 0;
-    final displayIngredients = ingredients.take(5).toList();
+    final displayIngredients = ingredients;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -452,7 +449,7 @@ class _IngredientsSection extends StatelessWidget {
             final riskLevel = ingredient['riskLevel'] as String? ?? 'Low';
             final riskColor = _getRiskColor(riskLevel);
             final riskText = _formatRiskLevel(riskLevel);
-            final isLast = index == displayIngredients.length - 1 && remainingCount == 0;
+            final isLast = index == displayIngredients.length - 1;
             
             return Column(
               children: [
@@ -469,39 +466,7 @@ class _IngredientsSection extends StatelessWidget {
             );
           }),
           
-          // "+ X more Ingredients" button
-          if (remainingCount > 0) ...[
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Navigate to full ingredients list
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF22C55E),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                  ),
-                  child: Text(
-                    '+ $remainingCount more Ingredients',
-                    style: const TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ] else
-            const SizedBox(height: 8),
+          const SizedBox(height: 8),
         ],
       ),
     );

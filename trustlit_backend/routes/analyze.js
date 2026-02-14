@@ -175,40 +175,43 @@ router.post('/', upload.fields([
                             content: [
                                 {
                                     type: 'text',
-                                    text: `Analyze these ${productType} product images. The first image is the front of the product, and the second image shows the ingredients/nutrition label on the back.
+                                    text: `Analyze these consumer product images. The first image is the front of the product, and the second image shows the ingredients list on the back.
 
-CRITICAL SCORING RULES - YOU MUST FOLLOW THESE STRICTLY:
+Identify what type of product this is (food, cosmetic, supplement, household, beverage, etc.) and analyze ALL ingredients shown on the label.
 
-PROCESSED FOOD PENALTY (MANDATORY):
-- Chips, crackers, cookies, candy, sodas, instant noodles, frozen pizzas, and similar processed snacks MUST have LOW scores
-- If product contains seed oils (sunflower, canola, vegetable), sugar, artificial flavors, or preservatives = Safety score MUST be below 40
-- Ultra-processed foods should NEVER score above 40 for safety
-- Natural/organic whole foods can score 70-100
+SCORING RULES:
 
-SAFETY SCORING (Health Impact):
+FOR FOOD & BEVERAGE PRODUCTS:
+Safety (Health Impact):
 - 70-100: Only for whole foods like fruits, vegetables, nuts, eggs, pure dairy with no additives
-- 40-70: Minimally processed with some concerns (like bread with preservatives)  
+- 40-70: Minimally processed with some concerns (like bread with preservatives)
 - 20-40: Processed snacks, chips, sugary drinks, foods with seed oils and additives
 - 0-20: Highly processed with multiple harmful chemicals
+- MANDATORY: Chips, crackers, cookies, candy, sodas = Safety MUST be below 40
+- If product contains seed oils (sunflower, canola, vegetable), sugar, artificial flavors = Safety below 40
 
-EFFICACY SCORING (Nutritional Value):
-- Does it provide genuine nutrition or just empty calories?
-- Chips and candy = 30-50 (low nutritional value)
-- Whole foods with vitamins/minerals = 70-100
+Efficacy (Nutritional Value):
+- Chips and candy = 30-50 (empty calories)
+- Whole foods = 70-100
 
-TRANSPARENCY SCORING (Brand Honesty):
-- Does the brand clearly disclose all ingredients?
-- Are there hidden "natural flavors" or unclear additives?
+FOR COSMETIC & SKINCARE PRODUCTS:
+Safety: Rate based on ingredient toxicity, irritation potential, known carcinogens
+- Products with parabens, phthalates, formaldehyde = Safety below 40
+- Clean/natural products = 70-100
+Efficacy: Does it deliver on its claims?
 
-Return a JSON object with this EXACT structure (no markdown, no code blocks, just JSON):
+FOR ALL PRODUCTS:
+Transparency: Are all ingredients clearly disclosed? Vague terms like "fragrance" or "natural flavors" = lower score.
+
+Return a JSON object with this EXACT structure (no markdown, no code blocks, just raw JSON):
 {
   "productName": "Name visible on product",
-  "category": "Food/Cosmetic/Supplement/etc",
+  "category": "Food/Cosmetic/Supplement/Beverage/Household/etc",
   "overallScore": 30,
   "safetyScore": 25,
   "efficacyScore": 40,
   "transparencyScore": 50,
-  "summary": "2-3 sentence product safety summary - BE HONEST about processed food concerns",
+  "summary": "2-3 sentence product safety summary",
   "ingredients": [
     {
       "name": "Ingredient name",
@@ -218,7 +221,7 @@ Return a JSON object with this EXACT structure (no markdown, no code blocks, jus
       "description": "What this ingredient does"
     }
   ],
-  "healthImpact": "Health impact analysis - be critical of processed foods",
+  "healthImpact": "Health/safety impact analysis",
   "shortTermEffects": "Short-term effects",
   "longTermEffects": "Long-term effects",
   "hiddenChemicals": "Hidden ingredients or null",
@@ -228,7 +231,8 @@ Return a JSON object with this EXACT structure (no markdown, no code blocks, jus
   "whatPeopleSay": "General reputation"
 }
 
-REMEMBER: Chips like SunChips, Lay's, Doritos should get Safety 25-35, NOT 70+!`,
+REMEMBER: Chips like SunChips, Lay's, Doritos should get Safety 25-35, NOT 70+!
+You MUST analyze this product regardless of what type it is.`,
                                 },
                                 {
                                     type: 'image_url',
