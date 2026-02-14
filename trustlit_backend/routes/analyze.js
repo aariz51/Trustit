@@ -262,10 +262,13 @@ Score processed foods/junk food below 40 for safety. Score natural/whole foods 7
             try {
                 console.log(`Analysis attempt ${attempt}...`);
                 const promptIndex = attempt - 1;
+                // Use gpt-4o-mini on attempt 3 (less restrictive content policy)
+                const model = attempt <= 2 ? 'gpt-4o' : 'gpt-4o-mini';
 
-                // Call OpenAI GPT-4o Vision
+                // Call OpenAI Vision
                 const response = await openai.chat.completions.create({
-                    model: 'gpt-4o',
+                    model: model,
+                    response_format: { type: 'json_object' },
                     messages: [
                         {
                             role: 'system',
