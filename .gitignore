@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+trustlit_backend/node_modules/
+
+# Environment variables
+.env
+trustlit_backend/.env
+
+# OS files
+.DS_Store
+*.DS_Store
+
+# Flutter/Dart
+trustlit_app/.dart_tool/
+trustlit_app/.packages
+trustlit_app/build/
+trustlit_app/.flutter-plugins
+trustlit_app/.flutter-plugins-dependencies
+
+# iOS
+trustlit_app/ios/Pods/
+trustlit_app/ios/.symlinks/
+
+# IDE
+.idea/
+.vscode/
+*.iml
