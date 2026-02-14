@@ -267,17 +267,6 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       ),
       child: Row(
         children: [
-          // Camera button
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Icon(Icons.camera_alt_outlined, color: Colors.grey, size: 20),
-          ),
-          const SizedBox(width: 12),
           
           // Text Input
           Expanded(
