@@ -4,7 +4,6 @@ import '../../config/app_colors.dart';
 import '../../widgets/analysis_notification_overlay.dart';
 
 /// Main Shell with Bottom Navigation Bar
-/// Wraps all main screens (Home, History, Chat, Profile)
 class MainShell extends StatelessWidget {
   final Widget child;
 
@@ -16,7 +15,6 @@ class MainShell extends StatelessWidget {
       body: Stack(
         children: [
           child,
-          // Analysis notification overlay at top
           const AnalysisNotificationOverlay(),
         ],
       ),
@@ -76,7 +74,7 @@ class _BottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 4),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -84,27 +82,27 @@ class _BottomNavBar extends StatelessWidget {
               // Home
               _NavItem(
                 imagePath: 'assets/images/image copy.png',
-                iconSize: 26,
+                iconSize: 32,
                 isActive: currentIndex == 0,
                 onTap: () => _onItemTapped(context, 0),
               ),
               // History
               _NavItem(
                 imagePath: 'assets/images/image copy 4.png',
-                iconSize: 26,
+                iconSize: 32,
                 isActive: currentIndex == 1,
                 onTap: () => _onItemTapped(context, 1),
               ),
-              // Center Camera/Scan Button
+              // Center Scan Button - bigger than the rest
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 6),
                 child: GestureDetector(
                   onTap: () => _onItemTapped(context, 2),
                   child: ClipOval(
                     child: Image.asset(
                       'assets/images/image.png',
-                      width: 50,
-                      height: 50,
+                      width: 54,
+                      height: 54,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -113,14 +111,14 @@ class _BottomNavBar extends StatelessWidget {
               // AI Assistant
               _NavItem(
                 imagePath: 'assets/images/image copy 2.png',
-                iconSize: 26,
+                iconSize: 32,
                 isActive: currentIndex == 3,
                 onTap: () => _onItemTapped(context, 3),
               ),
               // Guides
               _NavItem(
                 imagePath: 'assets/images/image copy 3.png',
-                iconSize: 26,
+                iconSize: 32,
                 isActive: currentIndex == 4,
                 onTap: () => _onItemTapped(context, 4),
               ),
@@ -140,7 +138,7 @@ class _NavItem extends StatelessWidget {
 
   const _NavItem({
     required this.imagePath,
-    this.iconSize = 26,
+    this.iconSize = 32,
     required this.isActive,
     required this.onTap,
   });
@@ -155,41 +153,42 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon with optional green background
-            Container(
-              width: 42,
-              height: 42,
-              decoration: isActive
-                  ? BoxDecoration(
-                      color: const Color(0xFF22C55E).withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    )
-                  : null,
-              child: Center(
-                child: Opacity(
-                  opacity: isActive ? 1.0 : 0.45,
-                  child: Image.asset(
-                    imagePath,
-                    width: iconSize,
-                    height: iconSize,
-                    fit: BoxFit.contain,
+            // Icon - turns green when active, grey when inactive
+            isActive
+                ? ColorFiltered(
+                    colorFilter: const ColorFilter.mode(
+                      Color(0xFF22C55E),
+                      BlendMode.srcIn,
+                    ),
+                    child: Image.asset(
+                      imagePath,
+                      width: iconSize,
+                      height: iconSize,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                : Opacity(
+                    opacity: 0.45,
+                    child: Image.asset(
+                      imagePath,
+                      width: iconSize,
+                      height: iconSize,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             // Green dot for active
             if (isActive)
               Container(
-                width: 5,
-                height: 5,
+                width: 6,
+                height: 6,
                 decoration: const BoxDecoration(
                   color: Color(0xFF22C55E),
                   shape: BoxShape.circle,
                 ),
               )
             else
-              const SizedBox(height: 5),
+              const SizedBox(height: 6),
           ],
         ),
       ),
