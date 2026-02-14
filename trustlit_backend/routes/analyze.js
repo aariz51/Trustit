@@ -154,28 +154,23 @@ router.post('/', upload.fields([
         console.log(`Front image base64 length: ${frontImageBase64.length}`);
         console.log(`Back image base64 length: ${backImageBase64.length}`);
 
-        // Retry up to 2 times in case of AI refusal
+        // Retry up to 3 times with different prompts
         let analysisData = null;
         let lastError = null;
 
-        for (let attempt = 1; attempt <= 2; attempt++) {
-            try {
-                console.log(`Analysis attempt ${attempt}...`);
+        // Define different prompts for each attempt
+        const systemPrompts = [
+            // Attempt 1: Full detailed prompt
+            'You are TrustIt, a consumer product ingredient and safety analysis assistant built for a mobile app. Users take photos of food, beverage, cosmetic, supplement, and household product packaging. Your job is to read the product label and ingredients list from the photos, then analyze each ingredient for safety. You MUST always analyze whatever product is shown — food, drink, skincare, shampoo, cleaning product, supplement, snack, candy, or anything else. You MUST respond with ONLY valid JSON. No markdown, no explanation text, no code blocks — just the raw JSON object. Never refuse to analyze a product.',
+            // Attempt 2: Simpler, more direct
+            'You are a product label reader. Read the product name and ingredients from these images and return a JSON analysis. Always respond with valid JSON only. Never refuse.',
+            // Attempt 3: Minimal
+            'Read the label in these product photos. Return JSON with productName, category, overallScore (0-100), safetyScore, efficacyScore, transparencyScore, summary, and ingredients array. JSON only, no other text.',
+        ];
 
-                // Call OpenAI GPT-4o Vision
-                const response = await openai.chat.completions.create({
-                    model: 'gpt-4o',
-                    messages: [
-                        {
-                            role: 'system',
-                            content: 'You are TrustIt, a consumer product ingredient and safety analysis assistant built for a mobile app. Users take photos of food, beverage, cosmetic, supplement, and household product packaging. Your job is to read the product label and ingredients list from the photos, then analyze each ingredient for safety. You MUST always analyze whatever product is shown — food, drink, skincare, shampoo, cleaning product, supplement, snack, candy, or anything else. You MUST respond with ONLY valid JSON. No markdown, no explanation text, no code blocks — just the raw JSON object. Never refuse to analyze a product.'
-                        },
-                        {
-                            role: 'user',
-                            content: [
-                                {
-                                    type: 'text',
-                                    text: `Analyze these consumer product images. The first image is the front of the product, and the second image shows the ingredients list on the back.
+        const userPrompts = [
+            // Attempt 1: Full scoring rules
+            `Analyze these consumer product images. The first image is the front of the product, and the second image shows the ingredients list on the back.
 
 Identify what type of product this is (food, cosmetic, supplement, household, beverage, etc.) and analyze ALL ingredients shown on the label.
 
@@ -233,26 +228,75 @@ Return a JSON object with this EXACT structure (no markdown, no code blocks, jus
 
 REMEMBER: Chips like SunChips, Lay's, Doritos should get Safety 25-35, NOT 70+!
 You MUST analyze this product regardless of what type it is.`,
+
+            // Attempt 2: Simplified prompt
+            `These are photos of a consumer product (front and back). Please read the product name from the front image and list all ingredients from the back image.
+
+Return ONLY this JSON (no other text):
+{
+  "productName": "product name from label",
+  "category": "Food/Cosmetic/Supplement/Beverage/Household",
+  "overallScore": 50,
+  "safetyScore": 50,
+  "efficacyScore": 50,
+  "transparencyScore": 50,
+  "summary": "Brief product summary",
+  "ingredients": [{"name": "ingredient", "riskLevel": "Low", "alsoKnownAs": null, "whyThisRisk": "explanation", "description": "what it does"}],
+  "healthImpact": "impact description",
+  "shortTermEffects": "effects",
+  "longTermEffects": "effects",
+  "hiddenChemicals": null,
+  "howToUse": "instructions",
+  "goodAndBad": "pros and cons",
+  "whatItDoes": "purpose",
+  "whatPeopleSay": "reputation"
+}
+
+Score processed foods/junk food below 40 for safety. Score natural/whole foods 70+.`,
+
+            // Attempt 3: Most minimal
+            `Look at these two product photos. Tell me the product name and list the ingredients. Return as JSON with keys: productName, category, overallScore (number 0-100), safetyScore, efficacyScore, transparencyScore, summary, ingredients (array of objects with name, riskLevel, alsoKnownAs, whyThisRisk, description), healthImpact, shortTermEffects, longTermEffects, hiddenChemicals, howToUse, goodAndBad, whatItDoes, whatPeopleSay. JSON only.`,
+        ];
+
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                console.log(`Analysis attempt ${attempt}...`);
+                const promptIndex = attempt - 1;
+
+                // Call OpenAI GPT-4o Vision
+                const response = await openai.chat.completions.create({
+                    model: 'gpt-4o',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: systemPrompts[promptIndex]
+                        },
+                        {
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'text',
+                                    text: userPrompts[promptIndex],
                                 },
                                 {
                                     type: 'image_url',
                                     image_url: {
                                         url: `data:image/jpeg;base64,${frontImageBase64}`,
-                                        detail: 'high',
+                                        detail: attempt === 1 ? 'high' : 'low',
                                     },
                                 },
                                 {
                                     type: 'image_url',
                                     image_url: {
                                         url: `data:image/jpeg;base64,${backImageBase64}`,
-                                        detail: 'high',
+                                        detail: attempt === 1 ? 'high' : 'low',
                                     },
                                 },
                             ],
                         },
                     ],
                     max_tokens: 4096,
-                    temperature: 0.2,
+                    temperature: attempt === 1 ? 0.2 : 0.4,
                 });
 
                 // Parse the response
@@ -260,11 +304,11 @@ You MUST analyze this product regardless of what type it is.`,
                 console.log('Raw AI response:', content.substring(0, 300) + '...');
 
                 // Check for refusal responses
-                if (content.includes("I'm sorry") || content.includes("I can't assist") || content.includes("I cannot") || content.includes("I'm unable") || content.includes("I'm not able")) {
+                if (content.includes("I'm sorry") || content.includes("I can't assist") || content.includes("I cannot") || content.includes("I'm unable") || content.includes("I'm not able") || content.includes("I apologize")) {
                     console.log(`Attempt ${attempt}: AI refused to analyze. Response: ${content.substring(0, 200)}`);
                     lastError = new Error(`AI refused to analyze the product: ${content.substring(0, 100)}`);
-                    if (attempt < 2) {
-                        console.log('Retrying...');
+                    if (attempt < 3) {
+                        console.log(`Retrying with different prompt (attempt ${attempt + 1})...`);
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         continue;
                     }
@@ -293,14 +337,14 @@ You MUST analyze this product regardless of what type it is.`,
                 }
 
                 // Success - break out of retry loop
-                console.log(`Analysis successful: ${analysisData.productName}, score: ${analysisData.overallScore}`);
+                console.log(`Analysis successful on attempt ${attempt}: ${analysisData.productName}, score: ${analysisData.overallScore}`);
                 break;
 
             } catch (innerError) {
                 console.error(`Attempt ${attempt} failed:`, innerError.message);
                 lastError = innerError;
-                if (attempt < 2) {
-                    console.log('Retrying...');
+                if (attempt < 3) {
+                    console.log(`Retrying with different prompt (attempt ${attempt + 1})...`);
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
@@ -308,7 +352,7 @@ You MUST analyze this product regardless of what type it is.`,
 
         // If all attempts failed
         if (!analysisData) {
-            console.error('All analysis attempts failed. Last error:', lastError?.message);
+            console.error('All 3 analysis attempts failed. Last error:', lastError?.message);
             return res.status(500).json({
                 success: false,
                 error: lastError?.message || 'Failed to analyze product after multiple attempts',
