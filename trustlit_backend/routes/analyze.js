@@ -154,20 +154,28 @@ router.post('/', upload.fields([
         console.log(`Front image base64 length: ${frontImageBase64.length}`);
         console.log(`Back image base64 length: ${backImageBase64.length}`);
 
-        // Call OpenAI GPT-4o Vision
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You are a product safety analyst. You MUST analyze the images provided and return ONLY valid JSON. Do not include any explanation text, markdown formatting, or code blocks. Just the raw JSON object.'
-                },
-                {
-                    role: 'user',
-                    content: [
+        // Retry up to 2 times in case of AI refusal
+        let analysisData = null;
+        let lastError = null;
+
+        for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+                console.log(`Analysis attempt ${attempt}...`);
+
+                // Call OpenAI GPT-4o Vision
+                const response = await openai.chat.completions.create({
+                    model: 'gpt-4o',
+                    messages: [
                         {
-                            type: 'text',
-                            text: `Analyze these ${productType} product images. The first image is the front of the product, and the second image shows the ingredients/nutrition label on the back.
+                            role: 'system',
+                            content: 'You are TrustIt, a consumer product ingredient and safety analysis assistant built for a mobile app. Users take photos of food, beverage, cosmetic, supplement, and household product packaging. Your job is to read the product label and ingredients list from the photos, then analyze each ingredient for safety. You MUST always analyze whatever product is shown — food, drink, skincare, shampoo, cleaning product, supplement, snack, candy, or anything else. You MUST respond with ONLY valid JSON. No markdown, no explanation text, no code blocks — just the raw JSON object. Never refuse to analyze a product.'
+                        },
+                        {
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'text',
+                                    text: `Analyze these ${productType} product images. The first image is the front of the product, and the second image shows the ingredients/nutrition label on the back.
 
 CRITICAL SCORING RULES - YOU MUST FOLLOW THESE STRICTLY:
 
@@ -221,52 +229,86 @@ Return a JSON object with this EXACT structure (no markdown, no code blocks, jus
 }
 
 REMEMBER: Chips like SunChips, Lay's, Doritos should get Safety 25-35, NOT 70+!`,
-                        },
-                        {
-                            type: 'image_url',
-                            image_url: {
-                                url: `data:image/jpeg;base64,${frontImageBase64}`,
-                                detail: 'high',
-                            },
-                        },
-                        {
-                            type: 'image_url',
-                            image_url: {
-                                url: `data:image/jpeg;base64,${backImageBase64}`,
-                                detail: 'high',
-                            },
+                                },
+                                {
+                                    type: 'image_url',
+                                    image_url: {
+                                        url: `data:image/jpeg;base64,${frontImageBase64}`,
+                                        detail: 'high',
+                                    },
+                                },
+                                {
+                                    type: 'image_url',
+                                    image_url: {
+                                        url: `data:image/jpeg;base64,${backImageBase64}`,
+                                        detail: 'high',
+                                    },
+                                },
+                            ],
                         },
                     ],
-                },
-            ],
-            max_tokens: 4096,
-            temperature: 0.2,
-        });
+                    max_tokens: 4096,
+                    temperature: 0.2,
+                });
 
-        // Parse the response
-        const content = response.choices[0].message.content;
-        console.log('Raw AI response:', content.substring(0, 200) + '...');
+                // Parse the response
+                const content = response.choices[0].message.content;
+                console.log('Raw AI response:', content.substring(0, 300) + '...');
 
-        // Extract JSON from response (handle potential markdown wrapping)
-        let analysisData;
-        try {
-            // Try direct parse first
-            analysisData = JSON.parse(content);
-        } catch (e) {
-            // Try to extract JSON from markdown code block
-            const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-            if (jsonMatch) {
-                analysisData = JSON.parse(jsonMatch[1]);
-            } else {
-                // Try to find JSON object in the response
-                const jsonStart = content.indexOf('{');
-                const jsonEnd = content.lastIndexOf('}');
-                if (jsonStart !== -1 && jsonEnd !== -1) {
-                    analysisData = JSON.parse(content.substring(jsonStart, jsonEnd + 1));
-                } else {
-                    throw new Error('Could not parse AI response as JSON');
+                // Check for refusal responses
+                if (content.includes("I'm sorry") || content.includes("I can't assist") || content.includes("I cannot") || content.includes("I'm unable") || content.includes("I'm not able")) {
+                    console.log(`Attempt ${attempt}: AI refused to analyze. Response: ${content.substring(0, 200)}`);
+                    lastError = new Error(`AI refused to analyze the product: ${content.substring(0, 100)}`);
+                    if (attempt < 2) {
+                        console.log('Retrying...');
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        continue;
+                    }
+                    break;
+                }
+
+                // Extract JSON from response (handle potential markdown wrapping)
+                try {
+                    // Try direct parse first
+                    analysisData = JSON.parse(content);
+                } catch (e) {
+                    // Try to extract JSON from markdown code block
+                    const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+                    if (jsonMatch) {
+                        analysisData = JSON.parse(jsonMatch[1]);
+                    } else {
+                        // Try to find JSON object in the response
+                        const jsonStart = content.indexOf('{');
+                        const jsonEnd = content.lastIndexOf('}');
+                        if (jsonStart !== -1 && jsonEnd !== -1) {
+                            analysisData = JSON.parse(content.substring(jsonStart, jsonEnd + 1));
+                        } else {
+                            throw new Error('Could not parse AI response as JSON');
+                        }
+                    }
+                }
+
+                // Success - break out of retry loop
+                console.log(`Analysis successful: ${analysisData.productName}, score: ${analysisData.overallScore}`);
+                break;
+
+            } catch (innerError) {
+                console.error(`Attempt ${attempt} failed:`, innerError.message);
+                lastError = innerError;
+                if (attempt < 2) {
+                    console.log('Retrying...');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
+        }
+
+        // If all attempts failed
+        if (!analysisData) {
+            console.error('All analysis attempts failed. Last error:', lastError?.message);
+            return res.status(500).json({
+                success: false,
+                error: lastError?.message || 'Failed to analyze product after multiple attempts',
+            });
         }
 
         // Generate unique analysis ID
