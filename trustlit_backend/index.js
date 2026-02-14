@@ -3,7 +3,10 @@
  * Express server with OpenAI GPT-4 Vision integration for product analysis
  */
 
-require('dotenv').config();
+// Only load .env file in development — in production (Render), use platform env vars only
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
