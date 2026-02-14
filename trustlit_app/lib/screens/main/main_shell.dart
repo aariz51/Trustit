@@ -63,7 +63,8 @@ class _BottomNavBar extends StatelessWidget {
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
     // Height of the nav bar area (excluding the overlapping scan button part)
-    const double navBarHeight = 70;
+    // 72px icon + 4px gap + 6px dot = 82px, so 84px gives 2px breathing room
+    const double navBarHeight = 84;
     // How much the scan button rises above the nav bar
     const double scanOverlap = 28;
     // Total height including the overlap area
@@ -94,50 +95,53 @@ class _BottomNavBar extends StatelessWidget {
             ),
           ),
 
-          // Nav items row — aligned at the bottom
+          // Nav items row — equal-width slots via Expanded
           Positioned(
             left: 0,
             right: 0,
             bottom: bottomPad,
             height: navBarHeight,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Home
-                  _NavItem(
+            child: Row(
+              children: [
+                // Home — slot 1/5
+                Expanded(
+                  child: _NavItem(
                     imagePath: 'assets/images/image copy.png',
                     iconSize: 52,
                     isActive: currentIndex == 0,
                     onTap: () => _onItemTapped(context, 0),
                   ),
-                  // History
-                  _NavItem(
+                ),
+                // History — slot 2/5
+                Expanded(
+                  child: _NavItem(
                     imagePath: 'assets/images/image copy 4.png',
                     iconSize: 42,
                     isActive: currentIndex == 1,
                     onTap: () => _onItemTapped(context, 1),
                   ),
-                  // Placeholder for scan button space
-                  const SizedBox(width: 80),
-                  // AI Assistant
-                  _NavItem(
+                ),
+                // Scan placeholder — slot 3/5 (equal width)
+                const Expanded(child: SizedBox()),
+                // AI Assistant — slot 4/5
+                Expanded(
+                  child: _NavItem(
                     imagePath: 'assets/images/image copy 2.png',
-                    iconSize: 68,
+                    iconSize: 72,
                     isActive: currentIndex == 3,
                     onTap: () => _onItemTapped(context, 3),
                   ),
-                  // Guides
-                  _NavItem(
+                ),
+                // Guides — slot 5/5
+                Expanded(
+                  child: _NavItem(
                     imagePath: 'assets/images/image copy 3.png',
-                    iconSize: 68,
+                    iconSize: 72,
                     isActive: currentIndex == 4,
                     onTap: () => _onItemTapped(context, 4),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
 
