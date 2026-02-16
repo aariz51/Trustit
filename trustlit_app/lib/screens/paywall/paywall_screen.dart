@@ -93,6 +93,26 @@ class _PaywallScreenState extends State<PaywallScreen> {
     setState(() => _isLoading = true);
 
     try {
+      // Check if running on TestFlight — bypass payment
+      final testFlight = await SubscriptionService.isTestFlight();
+      if (testFlight) {
+        final productId = isYearlySelected
+            ? SubscriptionService.yearlyProductId
+            : SubscriptionService.lifetimeProductId;
+        await _subscriptionService.bypassPurchase(productId);
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('TestFlight: Access activated!')),
+          );
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted) context.go('/home');
+          });
+        }
+        return;
+      }
+
+      // Production: use real StoreKit purchase flow
       if (isYearlySelected) {
         // For yearly plan, initiate purchase (Apple handles the trial)
         final success = await _subscriptionService.purchaseYearly();

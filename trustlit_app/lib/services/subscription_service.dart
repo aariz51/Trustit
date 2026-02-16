@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:dio/dio.dart';
 import '../models/subscription_model.dart';
@@ -315,6 +316,61 @@ class SubscriptionService {
     }
 
     await _inAppPurchase.restorePurchases();
+  }
+
+  // ==========================================
+  // TESTFLIGHT DETECTION & BYPASS
+  // ==========================================
+
+  /// Detect if app is running from TestFlight
+  /// TestFlight builds have 'sandboxReceipt' in the receipt URL path
+  /// App Store production builds do NOT have this
+  static Future<bool> isTestFlight() async {
+    if (!Platform.isIOS) return false;
+    if (kDebugMode) return true; // Also bypass in debug mode
+    
+    try {
+      // Use method channel to check receipt URL
+      const channel = MethodChannel('com.trustlt.app/testflight');
+      final bool result = await channel.invokeMethod('isTestFlight');
+      return result;
+    } catch (e) {
+      // Fallback: check if store is available but we're not in release
+      // If method channel fails, check using assert trick
+      bool isAssertOn = false;
+      assert(isAssertOn = true);
+      return isAssertOn; // true in debug, false in release
+    }
+  }
+
+  /// Bypass purchase for TestFlight - directly activate subscription
+  Future<void> bypassPurchase(String productId) async {
+    final now = DateTime.now();
+    SubscriptionModel subscription;
+
+    if (productId == lifetimeProductId) {
+      subscription = SubscriptionModel(
+        productId: productId,
+        type: SubscriptionType.lifetime,
+        isActive: true,
+        purchaseDate: now,
+        expiryDate: null,
+        isTrialActive: false,
+      );
+    } else {
+      subscription = SubscriptionModel(
+        productId: productId,
+        type: SubscriptionType.yearly,
+        isActive: true,
+        purchaseDate: now,
+        expiryDate: now.add(const Duration(days: 365)),
+        isTrialActive: false,
+      );
+    }
+
+    await _storageService.saveSubscription(subscription);
+    debugPrint('TestFlight bypass: Subscription activated for $productId');
+    _purchaseCompleteController.add(true);
   }
 
   // ==========================================
