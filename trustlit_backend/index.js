@@ -18,6 +18,8 @@ const analyzeRoute = require('./routes/analyze');
 const healthRoute = require('./routes/health');
 const aiChatRoute = require('./routes/ai_chat');
 const verifyReceiptRoute = require('./routes/verify-receipt');
+const privacyPolicyRoute = require('./routes/privacy-policy');
+const termsRoute = require('./routes/terms');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +40,8 @@ app.use('/api/health', healthRoute);
 app.use('/api/analyze', analyzeRoute);
 app.use('/api/ai-chat', aiChatRoute);
 app.use('/api/verify-receipt', verifyReceiptRoute);
+app.use('/privacy-policy', privacyPolicyRoute);
+app.use('/terms', termsRoute);
 
 // Root route
 app.get('/', (req, res) => {

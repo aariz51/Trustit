@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/subscription_service.dart';
 
 /// Paywall Screen - Exact Figma Design with In-App Purchase Integration
@@ -50,6 +51,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Future<void> _initializeSubscriptionService() async {
     await _subscriptionService.initialize();
     if (mounted) setState(() {});
+  }
+
+  /// Open URL in browser
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
 
@@ -365,17 +374,56 @@ class _PaywallScreenState extends State<PaywallScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            // Disclaimer text
+            // Subscription terms disclaimer (required by Apple)
             Text(
               isYearlySelected 
-                  ? '3 days FREE, then \$39.99 per year (\$3.33/month)'
-                  : 'One-time purchase, unlimited access',
+                  ? '3 days FREE, then \$39.99 per year (\$3.33/month).\nSubscription auto-renews. Cancel anytime.'
+                  : 'One-time purchase of \$119.00, unlimited lifetime access.',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 12,
-                color: Colors.grey.shade700,
+                fontSize: 11,
+                color: Colors.grey.shade600,
+                height: 1.4,
               ),
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            // Terms of Use and Privacy Policy links (required by Apple 3.1.2)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () => _launchUrl('https://trustlt.onrender.com/terms'),
+                  child: Text(
+                    'Terms of Use',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    '|',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _launchUrl('https://trustlt.onrender.com/privacy-policy'),
+                  child: Text(
+                    'Privacy Policy',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
