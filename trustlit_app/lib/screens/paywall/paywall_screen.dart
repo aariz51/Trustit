@@ -303,7 +303,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   Expanded(
                     child: _buildPricingCard(
                       title: 'YEARLY',
-                      price: '\$3.33 /mo',
+                      price: '\$39.99/year',
+                      subtitle: '(\$3.33/month)',
                       isSelected: isYearlySelected,
                       showBadge: true,
                       onTap: () => setState(() => isYearlySelected = true),
@@ -328,8 +329,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 const SizedBox(width: 6),
                 Text(
                   isYearlySelected 
-                      ? 'No Payment Due Now' 
-                      : 'One-time Payment',
+                      ? '3-Day Free Trial — No Payment Now' 
+                      : 'One-time Payment — Lifetime Access',
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 14,
@@ -365,7 +366,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         ),
                       )
                     : Text(
-                        isYearlySelected ? 'Try for \$0.00' : 'Buy Lifetime Access',
+                        isYearlySelected ? 'Start Free Trial' : 'Buy Lifetime — \$119.00',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -377,8 +378,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
             // Subscription terms disclaimer (required by Apple)
             Text(
               isYearlySelected 
-                  ? '3 days FREE, then \$39.99 per year (\$3.33/month).\nSubscription auto-renews. Cancel anytime.'
-                  : 'One-time purchase of \$119.00, unlimited lifetime access.',
+                  ? 'Free for 3 days, then \$39.99/year (\$3.33/month).\nAuto-renews yearly. Cancel anytime in Apple ID Settings.\nPayment will be charged to your Apple ID account.'
+                  : 'One-time purchase of \$119.00. No subscription.\nUnlimited lifetime access. No recurring charges.',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 11,
@@ -437,6 +438,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     required bool isSelected,
     required VoidCallback onTap,
     bool showBadge = false,
+    String? subtitle,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -479,6 +481,17 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 1),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 11,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
