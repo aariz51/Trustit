@@ -39,26 +39,38 @@ router.get('/', (req, res) => {
         <li>We do not collect device identifiers for advertising</li>
     </ul>
 
-    <h2>3. Third-Party Services</h2>
-    <p><strong>OpenAI:</strong> Product images and AI chat messages are processed using OpenAI's API for analysis. OpenAI's usage policies apply to this processing. OpenAI does not use data submitted via API for training purposes. For more information, see <a href="https://openai.com/policies/privacy-policy">OpenAI's Privacy Policy</a>.</p>
+    <h2>3. Third-Party Services and Data Sharing</h2>
+    <p><strong>OpenAI (AI Analysis Provider):</strong> When you use the product scanning feature, your product label images (front and back photos) are sent from our server to OpenAI's API (a third-party AI service) for ingredient analysis. When you use the AI Assistant chat feature, your messages are also sent to OpenAI for generating responses. OpenAI processes this data in real-time and does not store it. OpenAI does not use data submitted via API for model training purposes. For more information, see <a href="https://openai.com/policies/privacy-policy">OpenAI's Privacy Policy</a>.</p>
     <p><strong>Apple App Store:</strong> In-app purchases and subscriptions are handled entirely by Apple. Apple's terms and privacy policy govern these transactions.</p>
+    <p><strong>No other third parties</strong> receive your data. We do not use advertising networks, analytics platforms, or any other data brokers.</p>
 
-    <h2>4. Data Security</h2>
+    <h2>4. User Consent and Data Sharing Disclosure</h2>
+    <p>Before the app sends any of your data to a third-party AI service, you will be presented with a clear consent dialog within the app. This dialog will explain:</p>
+    <ul>
+        <li><strong>What data is sent:</strong> Product label photos (front and back images)</li>
+        <li><strong>Who the data is sent to:</strong> OpenAI (third-party AI service)</li>
+        <li><strong>How data is handled:</strong> Images are processed in real-time and not stored</li>
+        <li><strong>Security:</strong> All data is transmitted via encrypted HTTPS connection</li>
+    </ul>
+    <p>You must explicitly agree to this data sharing before any product analysis can proceed. If you do not agree, no data will be sent and you can continue using the app without the analysis feature.</p>
+
+
+    <h2>5. Data Security</h2>
     <p>All data transmitted between the app and our servers is encrypted using HTTPS/TLS. Product images are processed in memory and are not written to disk or stored permanently.</p>
 
-    <h2>5. Children's Privacy</h2>
+    <h2>6. Children's Privacy</h2>
     <p>Trust It is not directed at children under the age of 13. We do not knowingly collect information from children under 13.</p>
 
-    <h2>6. Data Retention</h2>
+    <h2>7. Data Retention</h2>
     <p>Product images are processed in real-time and discarded immediately after analysis. Scan history is stored locally on your device only and can be cleared at any time from the app.</p>
 
-    <h2>7. Your Rights</h2>
+    <h2>8. Your Rights</h2>
     <p>Since we do not collect or store personal data, there is no personal data to access, modify, or delete on our servers. Your local scan history can be cleared directly from the app.</p>
 
-    <h2>8. Changes to This Policy</h2>
+    <h2>9. Changes to This Policy</h2>
     <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated date.</p>
 
-    <h2>9. Contact Us</h2>
+    <h2>10. Contact Us</h2>
     <p>If you have any questions about this Privacy Policy, please contact us at: <strong>trustit.app.support@gmail.com</strong></p>
 </body>
 </html>`);
