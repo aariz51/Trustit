@@ -30,41 +30,29 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     final consentGiven = prefs.getBool(_consentKey) ?? false;
 
     if (!consentGiven) {
-      // Show consent dialog
+      // Show consent dialog with exact Apple-required text
       final agreed = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Row(
-            children: [
-              Icon(Icons.shield_outlined, color: Color(0xFF22C55E), size: 24),
-              SizedBox(width: 8),
-              Text('Data & Privacy',
-                style: TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.w700)),
-            ],
+          title: const Text(
+            'Data & Privacy',
+            style: TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.w700),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'To analyze your product, we need to send your product label photos to a third-party AI service.',
-                style: TextStyle(fontSize: 14, height: 1.5),
+                'The app sends product label images and ingredient text to OpenAI for analysis. This data is not stored, and no personal information like your name is collected.\n\nDo you consent to send this data to OpenAI for analysis?',
+                style: TextStyle(fontSize: 15, height: 1.5),
               ),
-              const SizedBox(height: 16),
-              _buildInfoRow(Icons.photo_camera_outlined, 'What is sent:', 'Your product label photos (front & back images)'),
-              const SizedBox(height: 10),
-              _buildInfoRow(Icons.cloud_outlined, 'Sent to:', 'OpenAI (third-party AI service) for ingredient analysis'),
-              const SizedBox(height: 10),
-              _buildInfoRow(Icons.delete_outline, 'Storage:', 'Images are processed in real-time and NOT stored on our servers or by OpenAI'),
-              const SizedBox(height: 10),
-              _buildInfoRow(Icons.lock_outline, 'Security:', 'All data is transmitted securely via encrypted HTTPS connection'),
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: () => launchUrl(Uri.parse('https://trustlt.onrender.com/privacy-policy'), mode: LaunchMode.externalApplication),
                 child: const Text(
-                  'Read our full Privacy Policy',
+                  'Read our Privacy Policy',
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(0xFF22C55E),
@@ -77,7 +65,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text('Cancel', style: TextStyle(color: Colors.grey.shade600, fontFamily: 'Outfit')),
+              child: Text('Decline', style: TextStyle(color: Colors.grey.shade600, fontFamily: 'Outfit', fontSize: 16)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(true),
@@ -86,13 +74,13 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('I Agree & Continue', style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w600)),
+              child: const Text('Accept', style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w600, fontSize: 16)),
             ),
           ],
         ),
       );
 
-      if (agreed != true) return; // User cancelled
+      if (agreed != true) return; // User declined
       await prefs.setBool(_consentKey, true);
     }
 
@@ -104,27 +92,6 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       );
       context.go('/home');
     }
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 18, color: const Color(0xFF22C55E)),
-        const SizedBox(width: 8),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: const TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
-              children: [
-                TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.w600)),
-                TextSpan(text: value),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   @override

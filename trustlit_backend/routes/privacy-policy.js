@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
     </ul>
 
     <h2>3. Third-Party Services and Data Sharing</h2>
-    <p><strong>OpenAI (AI Analysis Provider):</strong> When you use the product scanning feature, your product label images (front and back photos) are sent from our server to OpenAI's API (a third-party AI service) for ingredient analysis. When you use the AI Assistant chat feature, your messages are also sent to OpenAI for generating responses. OpenAI processes this data in real-time and does not store it. OpenAI does not use data submitted via API for model training purposes. For more information, see <a href="https://openai.com/policies/privacy-policy">OpenAI's Privacy Policy</a>.</p>
+    <p><strong>OpenAI (AI Analysis Provider):</strong> We collect product label images and ingredient text and send them to OpenAI for analysis. This data is not stored on our servers or by OpenAI after processing. No personal information such as your name, email, or location is collected or sent. OpenAI adheres to equal protection standards and does not use data submitted via API for model training purposes. For more information, see <a href="https://openai.com/policies/privacy-policy">OpenAI's Privacy Policy</a>.</p>
     <p><strong>Apple App Store:</strong> In-app purchases and subscriptions are handled entirely by Apple. Apple's terms and privacy policy govern these transactions.</p>
     <p><strong>No other third parties</strong> receive your data. We do not use advertising networks, analytics platforms, or any other data brokers.</p>
 
