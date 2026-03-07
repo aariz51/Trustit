@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
 </head>
 <body>
     <h1>Privacy Policy</h1>
-    <p class="date">Last updated: February 18, 2026</p>
+    <p class="date">Last updated: March 7, 2026</p>
 
     <p>This Privacy Policy describes how <span class="app-name">Trust It</span> ("we", "our", or "us") collects, uses, and protects information when you use our mobile application.</p>
 
@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
     </ul>
 
     <h2>3. Third-Party Services and Data Sharing</h2>
-    <p><strong>OpenAI (AI Analysis Provider):</strong> We collect product label images and ingredient text and send them to OpenAI for analysis. This data is not stored on our servers or by OpenAI after processing. No personal information such as your name, email, or location is collected or sent. OpenAI adheres to equal protection standards and does not use data submitted via API for model training purposes. For more information, see <a href="https://openai.com/policies/privacy-policy">OpenAI's Privacy Policy</a>.</p>
+    <p><strong>OpenAI (AI Analysis Provider):</strong> We use OpenAI's GPT-4o API to power our product analysis and AI chat features. We collect product label images and ingredient text and send them to OpenAI for analysis. This data is not stored on our servers or by OpenAI after processing. No personal information such as your name, email, or location is collected or sent. OpenAI adheres to equal protection standards and does not use data submitted via API for model training purposes. For more information, see <a href="https://openai.com/policies/privacy-policy">OpenAI's Privacy Policy</a> and <a href="https://openai.com/policies/api-data-usage-policies">OpenAI's API Data Usage Policy</a>.</p>
     <p><strong>Apple App Store:</strong> In-app purchases and subscriptions are handled entirely by Apple. Apple's terms and privacy policy govern these transactions.</p>
     <p><strong>No other third parties</strong> receive your data. We do not use advertising networks, analytics platforms, or any other data brokers.</p>
 
