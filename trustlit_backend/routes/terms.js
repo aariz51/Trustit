@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Use - Trust It</title>
+    <title>Terms of Use - Safe Choice</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background: #fff; }
@@ -23,16 +23,16 @@ router.get('/', (req, res) => {
     <h1>Terms of Use</h1>
     <p class="date">Last updated: February 18, 2026</p>
 
-    <p>Please read these Terms of Use ("Terms") carefully before using the <span class="app-name">Trust It</span> mobile application ("App"). By downloading, installing, or using the App, you agree to be bound by these Terms.</p>
+    <p>Please read these Terms of Use ("Terms") carefully before using the <span class="app-name">Safe Choice</span> mobile application ("App"). By downloading, installing, or using the App, you agree to be bound by these Terms.</p>
 
     <h2>1. Description of Service</h2>
-    <p>Trust It is a consumer product analysis application that uses artificial intelligence to scan product labels and analyze ingredients for safety information. The App provides ingredient analysis, safety scores, and general health information based on AI-powered image recognition.</p>
+    <p>Safe Choice is a consumer product analysis application that uses artificial intelligence to scan product labels and analyze ingredients for safety information. The App provides ingredient analysis, safety scores, and general health information based on AI-powered image recognition.</p>
 
     <h2>2. Not Medical Advice</h2>
-    <p><strong>Important:</strong> The information provided by Trust It is for general informational purposes only and is NOT intended as medical advice, diagnosis, or treatment. Always consult with a qualified healthcare professional before making decisions about your health, diet, or product usage. The AI analysis may contain errors or inaccuracies.</p>
+    <p><strong>Important:</strong> The information provided by Safe Choice is for general informational purposes only and is NOT intended as medical advice, diagnosis, or treatment. Always consult with a qualified healthcare professional before making decisions about your health, diet, or product usage. The AI analysis may contain errors or inaccuracies.</p>
 
     <h2>3. Subscriptions and Payments</h2>
-    <p>Trust It offers the following purchase options:</p>
+    <p>Safe Choice offers the following purchase options:</p>
     <ul>
         <li><strong>Yearly Subscription:</strong> $39.99 per year with a 3-day free trial. The subscription automatically renews at the end of each billing period unless cancelled at least 24 hours before the end of the current period.</li>
         <li><strong>Lifetime Access:</strong> $119.00 one-time purchase for unlimited access.</li>
@@ -51,13 +51,13 @@ router.get('/', (req, res) => {
     </ul>
 
     <h2>5. Intellectual Property</h2>
-    <p>The App, including its design, features, and content, is owned by Trust It and is protected by intellectual property laws. You may not copy, modify, distribute, or create derivative works without our prior written consent.</p>
+    <p>The App, including its design, features, and content, is owned by Safe Choice and is protected by intellectual property laws. You may not copy, modify, distribute, or create derivative works without our prior written consent.</p>
 
     <h2>6. Disclaimer of Warranties</h2>
     <p>The App is provided "as is" without warranties of any kind, either express or implied. We do not guarantee the accuracy, completeness, or reliability of any analysis or information provided by the App. AI-generated analysis may contain errors.</p>
 
     <h2>7. Limitation of Liability</h2>
-    <p>To the maximum extent permitted by law, Trust It shall not be liable for any indirect, incidental, special, or consequential damages arising out of your use of the App, including but not limited to health-related decisions made based on the App's analysis.</p>
+    <p>To the maximum extent permitted by law, Safe Choice shall not be liable for any indirect, incidental, special, or consequential damages arising out of your use of the App, including but not limited to health-related decisions made based on the App's analysis.</p>
 
     <h2>8. Privacy</h2>
     <p>Your use of the App is also governed by our <a href="https://trustlt.onrender.com/privacy-policy">Privacy Policy</a>, which is incorporated into these Terms by reference.</p>

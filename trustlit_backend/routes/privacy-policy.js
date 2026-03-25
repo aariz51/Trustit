@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Trust It</title>
+    <title>Privacy Policy - Safe Choice</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background: #fff; }
@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
     <h1>Privacy Policy</h1>
     <p class="date">Last updated: March 7, 2026</p>
 
-    <p>This Privacy Policy describes how <span class="app-name">Trust It</span> ("we", "our", or "us") collects, uses, and protects information when you use our mobile application.</p>
+    <p>This Privacy Policy describes how <span class="app-name">Safe Choice</span> ("we", "our", or "us") collects, uses, and protects information when you use our mobile application.</p>
 
     <h2>1. Information We Collect</h2>
     <p><strong>Product Images:</strong> When you scan a product, the front and back images of the product are temporarily sent to our servers for AI-powered ingredient analysis. These images are processed in real-time and are <strong>not stored</strong> on our servers after analysis is complete.</p>
@@ -59,7 +59,7 @@ router.get('/', (req, res) => {
     <p>All data transmitted between the app and our servers is encrypted using HTTPS/TLS. Product images are processed in memory and are not written to disk or stored permanently.</p>
 
     <h2>6. Children's Privacy</h2>
-    <p>Trust It is not directed at children under the age of 13. We do not knowingly collect information from children under 13.</p>
+    <p>Safe Choice is not directed at children under the age of 13. We do not knowingly collect information from children under 13.</p>
 
     <h2>7. Data Retention</h2>
     <p>Product images are processed in real-time and discarded immediately after analysis. Scan history is stored locally on your device only and can be cleared at any time from the app.</p>
